@@ -1,11 +1,51 @@
 @import "tailwindcss";
 
-@theme {
+/* ========================================================= */
+/* DYNAMIC ACCENT PALETTES (Driven by active canvas mode)    */
+/* ========================================================= */
+
+:root,
+[data-theme="shockwave"] {
   --color-brand-dark: #07090e;
   --color-brand-navy: #0f172a;
-  --color-brand-accent: #6366f1;
   --color-brand-muted: #94a3b8;
   --color-brand-surface: #0f172a;
+
+  /* Shockwave (Indigo/Purple) */
+  --accent-primary: #6366f1;
+  --accent-light: #a5b4fc;
+  --accent-glow: rgba(99, 102, 241, 0.35);
+  --accent-border-fringe: rgba(165, 180, 252, 0.5);
+  --accent-border-back: rgba(99, 102, 241, 0.35);
+  --accent-flare: rgba(129, 140, 248, 0.05);
+}
+
+[data-theme="rain"] {
+  /* Digital Rain (Electric Cyan/Ice Blue) */
+  --accent-primary: #38bdf8;
+  --accent-light: #bae6fd;
+  --accent-glow: rgba(56, 189, 248, 0.35);
+  --accent-border-fringe: rgba(186, 230, 253, 0.55);
+  --accent-border-back: rgba(56, 189, 248, 0.35);
+  --accent-flare: rgba(56, 189, 248, 0.05);
+}
+
+[data-theme="embers"] {
+  /* Fire Embers (Molten Amber/Warm Gold) */
+  --accent-primary: #f59e0b;
+  --accent-light: #fde68a;
+  --accent-glow: rgba(245, 158, 11, 0.35);
+  --accent-border-fringe: rgba(253, 230, 138, 0.55);
+  --accent-border-back: rgba(245, 158, 11, 0.35);
+  --accent-flare: rgba(245, 158, 11, 0.05);
+}
+
+@theme {
+  --color-brand-dark: var(--color-brand-dark);
+  --color-brand-navy: var(--color-brand-navy);
+  --color-brand-accent: var(--accent-primary);
+  --color-brand-muted: var(--color-brand-muted);
+  --color-brand-surface: var(--color-brand-surface);
 
   --animate-float-slow: float-slow 14s ease-in-out infinite;
   --animate-float-reverse: float-reverse 18s ease-in-out infinite;
@@ -28,29 +68,30 @@
 }
 
 /* ========================================================= */
-/* LIQUID REFRACTIVE GLASS (With Dual-Mask Specular Rim)     */
+/* LIQUID REFRACTIVE GLASS (Adaptive Prism Accents)          */
 /* ========================================================= */
 
 .ios-glass-panel {
   position: relative;
-  /* Crystal additive base sheen */
   background: linear-gradient(
     145deg, 
     rgba(255, 255, 255, 0.08) 0%, 
     rgba(255, 255, 255, 0.02) 40%, 
-    rgba(15, 23, 42, 0.20) 100%
+    rgba(15, 23, 42, 0.28) 100%
   );
-  backdrop-filter: url(#liquid-refraction) brightness(120%) saturate(160%);
-  -webkit-backdrop-filter: url(#liquid-refraction) brightness(120%) saturate(160%);
+  backdrop-filter: url(#liquid-refraction) blur(3px) brightness(110%) contrast(115%) saturate(140%);
+  -webkit-backdrop-filter: url(#liquid-refraction) blur(3px) brightness(110%) contrast(115%) saturate(140%);
   border-radius: 28px;
   box-shadow: 
     0 24px 48px -12px rgba(0, 0, 0, 0.75),
     inset 0 1px 1px 0 rgba(255, 255, 255, 0.45);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.4s ease, 
+              border-color 0.6s ease;
   overflow: hidden;
 }
 
-/* Beveled Optical Refraction Border (IOR 1.5 Prism Simulation) */
+/* Dynamic Refraction Border Fringe */
 .ios-glass-panel::before {
   content: "";
   position: absolute;
@@ -59,11 +100,11 @@
   padding: 1.5px;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.85) 0%,          /* Incident light flare */
-    rgba(165, 180, 252, 0.5) 25%,          /* Prismatic indigo fringe */
-    rgba(255, 255, 255, 0.06) 50%,         /* Clean transmission pass */
-    rgba(99, 102, 241, 0.35) 75%,          /* Caustic back-scatter */
-    rgba(255, 255, 255, 0.6) 100%          /* Bottom specular edge */
+    rgba(255, 255, 255, 0.85) 0%,
+    var(--accent-border-fringe) 25%,
+    rgba(255, 255, 255, 0.06) 50%,
+    var(--accent-border-back) 75%,
+    rgba(255, 255, 255, 0.6) 100%
   );
   -webkit-mask: 
     linear-gradient(#fff 0 0) content-box, 
@@ -71,9 +112,10 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+  transition: background 0.6s ease;
 }
 
-/* Refractive Top Caustic Flare */
+/* Dynamic Top Caustic Flare */
 .ios-glass-panel::after {
   content: "";
   position: absolute;
@@ -84,11 +126,12 @@
   background: radial-gradient(
     80% 100% at 50% 0%,
     rgba(255, 255, 255, 0.09) 0%,
-    rgba(129, 140, 248, 0.04) 60%,
+    var(--accent-flare) 60%,
     transparent 100%
   );
   border-radius: 28px 28px 0 0;
   pointer-events: none;
+  transition: background 0.6s ease;
 }
 
 .ios-glass-nav {
@@ -96,24 +139,65 @@
   background: linear-gradient(
     145deg,
     rgba(255, 255, 255, 0.09) 0%,
-    rgba(10, 16, 32, 0.32) 100%
+    rgba(10, 16, 32, 0.38) 100%
   );
-  backdrop-filter: url(#liquid-refraction) brightness(120%) saturate(160%);
-  -webkit-backdrop-filter: url(#liquid-refraction) brightness(120%) saturate(160%);
-  border-radius: 9999px;
+  backdrop-filter: url(#liquid-refraction) blur(4px) brightness(110%) contrast(115%) saturate(140%);
+  -webkit-backdrop-filter: url(#liquid-refraction) blur(4px) brightness(110%) contrast(115%) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.20);
   box-shadow:
     0 12px 32px -6px rgba(0, 0, 0, 0.6),
     inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.55),
     inset 0 -1px 1px 0 rgba(0, 0, 0, 0.35);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Dynamic Hover State */
+/* Floating pill state (top of page) */
+.ios-glass-nav-floating {
+  border-radius: 9999px;
+  max-width: 1024px;
+}
+
+/* Expanded edge-to-edge docked state (scrolled down) */
+.ios-glass-nav-docked {
+  border-radius: 0 0 24px 24px;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  max-width: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 16, 32, 0.75) 0%,
+    rgba(7, 9, 14, 0.85) 100%
+  );
+  backdrop-filter: blur(12px) brightness(105%);
+  -webkit-backdrop-filter: blur(12px) brightness(105%);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.85);
+}
+
+.ios-glass-nav-fluid {
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(10, 16, 32, 0.45) 100%
+  );
+  backdrop-filter: url(#liquid-refraction) blur(6px) brightness(110%) contrast(115%) saturate(140%);
+  -webkit-backdrop-filter: url(#liquid-refraction) blur(6px) brightness(110%) contrast(115%) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 12px 32px -6px rgba(0, 0, 0, 0.6),
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.35);
+  will-change: width, max-width, border-radius, padding;
+  transition: border-color 0.6s ease, box-shadow 0.6s ease;
+}
+
+/* Dynamic Hover State with reactive glow color */
 .ios-glass-panel:hover {
   transform: translateY(-4px);
   box-shadow: 
     0 28px 56px -12px rgba(0, 0, 0, 0.85),
-    0 0 24px -2px rgba(99, 102, 241, 0.25),
+    0 0 24px -2px var(--accent-glow),
     inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.7);
 }
 

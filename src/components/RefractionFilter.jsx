@@ -15,7 +15,7 @@ export default function RefractionFilter() {
           <feDisplacementMap 
             in="SourceGraphic" 
             in2="noise" 
-            scale="12" 
+            scale="4" 
             xChannelSelector="R" 
             yChannelSelector="G" 
           />
