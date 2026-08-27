@@ -105,21 +105,19 @@ export default function App() {
         }}
       >
 <header 
-          className="ios-glass-nav-fluid pointer-events-auto flex items-center justify-between"
-          style={{
-            width: '100%',
-            maxWidth: scrollProgress >= 0.98 ? '100%' : `${1024 + scrollProgress * (typeof window !== 'undefined' && window.innerWidth > 1024 ? window.innerWidth - 1024 : 0)}px`,
-            borderRadius: navRadius,
-            paddingTop: `${14 - scrollProgress * 2}px`,
-            paddingBottom: `${14 - scrollProgress * 2}px`,
-            paddingLeft: `${24 + scrollProgress * 16}px`,
-            paddingRight: `${24 + scrollProgress * 16}px`,
-            borderTopWidth: scrollProgress >= 0.98 ? '0px' : '1px',
-            borderLeftWidth: scrollProgress >= 0.98 ? '0px' : '1px',
-            borderRightWidth: scrollProgress >= 0.98 ? '0px' : '1px',
-            borderBottomWidth: '1px'
-          }}
-        >
+  className={`ios-glass-nav-fluid pointer-events-auto flex items-center justify-between transition-all duration-300 ${
+    scrollProgress >= 0.98 ? 'is-docked' : ''
+  }`}
+  style={{
+    width: '100%',
+    maxWidth: scrollProgress >= 0.98 ? '100%' : `${1024 + scrollProgress * (typeof window !== 'undefined' && window.innerWidth > 1024 ? window.innerWidth - 1024 : 0)}px`,
+    borderRadius: scrollProgress >= 0.98 ? '0px' : navRadius,
+    paddingTop: `${14 - scrollProgress * 2}px`,
+    paddingBottom: `${14 - scrollProgress * 2}px`,
+    paddingLeft: `${24 + scrollProgress * 16}px`,
+    paddingRight: `${24 + scrollProgress * 16}px`
+  }}
+>
           <div className="w-full max-w-5xl mx-auto flex items-center justify-between">
             <button 
               onClick={() => navigateTo('home')} 
