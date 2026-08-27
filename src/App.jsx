@@ -44,9 +44,8 @@ export default function App() {
   // Interpolated Navbar geometry
   const navPaddingTop = (1 - scrollProgress) * 16;
   const navPaddingX = (1 - scrollProgress) * 20;
-  const topRadius = Math.round((1 - scrollProgress) * 32);
-  const bottomRadius = Math.round(32 - scrollProgress * 16);
-  const navRadius = `${topRadius}px ${topRadius}px ${bottomRadius}px ${bottomRadius}px`;
+  const currentRadius = Math.round((1 - scrollProgress) * 32);
+  const navRadius = `${currentRadius}px`; 
 
   return (
     <div className="min-h-screen w-full relative text-slate-100 overflow-x-hidden selection:bg-brand-accent selection:text-white flex flex-col items-center">
@@ -105,7 +104,7 @@ export default function App() {
           paddingRight: `${navPaddingX}px`
         }}
       >
-        <header 
+<header 
           className="ios-glass-nav-fluid pointer-events-auto flex items-center justify-between"
           style={{
             width: '100%',
