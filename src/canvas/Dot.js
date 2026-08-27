@@ -24,7 +24,7 @@ export class Dot {
     let highestAlpha = 0.16;
     let highestRippleIntensity = 0;
 
-    // Apply active mode-specific forces and alpha adjustments
+    // Apply active mode physics (Shockwave calculates mouse/ripples; Rain/Embers return 0 forces)
     if (modeHandler && typeof modeHandler.applyDotPhysics === 'function') {
       const result = modeHandler.applyDotPhysics(this, mouse, ripples);
       totalForceX += result.forceX || 0;
@@ -34,7 +34,7 @@ export class Dot {
       highestRippleIntensity = Math.max(highestRippleIntensity, result.rippleIntensity || 0);
     }
 
-    // Spring Physics Integration
+    // Spring Physics
     const targetX = this.originX + totalForceX;
     const targetY = this.originY + totalForceY;
 

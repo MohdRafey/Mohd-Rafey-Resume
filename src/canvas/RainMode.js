@@ -9,12 +9,13 @@ export class RainMode {
   }
 
   spawnRainDrop(cols, rows) {
-    if (cols <= 0 || this.rainDrops.length > 55) return;
+    if (cols <= 0 || this.rainDrops.length > 40) return;
     const startCol = Math.floor(Math.random() * (cols + 15)) - 10;
     this.rainDrops.push({
       col: startCol,
       row: 0,
-      speed: 0.60 + Math.random() * 0.35,
+      // Slower, gentler fall speed (reduced from 0.60–0.95 to 0.24–0.38)
+      speed: 0.24 + Math.random() * 0.14,
       driftX: 0.38 + Math.random() * 0.10,
       length: 2,
       maxRow: rows
@@ -71,7 +72,10 @@ export class RainMode {
             const dist = Math.hypot(dc, dr);
             if (dist <= INFLUENCE_RADIUS) {
               const intensity = (1 - dist / INFLUENCE_RADIUS) * p.weight;
-              grid[targetC][targetR].boltIntensity = Math.max(grid[targetC][targetR].boltIntensity, intensity);
+              grid[targetC][targetR].boltIntensity = Math.max(
+                grid[targetC][targetR].boltIntensity || 0,
+                intensity
+              );
             }
           }
         }
@@ -84,8 +88,9 @@ export class RainMode {
   }
 
   update(grid, cols, rows, ripples, width, height, DOT_SPACING) {
-    if (Math.random() < 0.60) this.spawnRainDrop(cols, rows);
-    if (Math.random() < 0.30) this.spawnRainDrop(cols, rows);
+    // Calmed spawn probability to match the slower drift
+    if (Math.random() < 0.25) this.spawnRainDrop(cols, rows);
+    if (Math.random() < 0.12) this.spawnRainDrop(cols, rows);
 
     // Natural thunder strike trigger
     if (Math.random() < 0.0022 && !this.lightningState.active) {
@@ -120,7 +125,7 @@ export class RainMode {
 
         if (grid[c] && grid[c][r]) {
           const intensity = step === 0 ? 1.0 : 0.65;
-          grid[c][r].rainIntensity = Math.max(grid[c][r].rainIntensity, intensity);
+          grid[c][r].rainIntensity = Math.max(grid[c][r].rainIntensity || 0, intensity);
         }
       }
 
@@ -148,7 +153,7 @@ export class RainMode {
   }
 
   handleClick() {
-    // Non-intrusive in rain mode
+    // Non-reactive (no user click triggers)
   }
 
   applyDotPhysics(dot, mouse, ripples) {
@@ -162,8 +167,9 @@ export class RainMode {
       const rdist = Math.hypot(rdx, rdy);
 
       const waveDist = Math.abs(rdist - rip.currentRadius);
-      if (waveDist < rip.waveWidth) {
-        const waveRatio = (1 - waveDist / rip.waveWidth) * rip.strength;
+      const waveWidth = rip.waveWidth || 8;
+      if (waveDist < waveWidth && rdist > 0) {
+        const waveRatio = (1 - waveDist / waveWidth) * rip.strength;
         rippleIntensity = Math.max(rippleIntensity, waveRatio);
         alpha = Math.max(alpha, 0.16 + waveRatio * 0.50);
       }
@@ -174,9 +180,9 @@ export class RainMode {
 
   drawDot(ctx, dot) {
     ctx.beginPath();
-    const lightningRadiusBoost = dot.boltIntensity * 1.2 + this.lightningState.globalAmbient * 0.25;
-    const drawRadius = dot.currentRadius + dot.rainIntensity * 1.1 + lightningRadiusBoost;
-    ctx.arc(dot.x, dot.y, drawRadius, 0, Math.PI * 2);
+    const lightningRadiusBoost = (dot.boltIntensity || 0) * 1.2 + (this.lightningState.globalAmbient || 0) * 0.25;
+    const drawRadius = (dot.currentRadius || dot.baseRadius) + (dot.rainIntensity || 0) * 1.1 + lightningRadiusBoost;
+    ctx.arc(dot.x, dot.y, Math.max(0.1, drawRadius), 0, Math.PI * 2);
 
     if (dot.rainIntensity > 0.05) {
       if (dot.rainIntensity > 0.65) {
@@ -189,12 +195,12 @@ export class RainMode {
     } else if (dot.boltIntensity > 0.08) {
       ctx.fillStyle = `rgba(186, 230, 253, ${0.25 + dot.boltIntensity * 0.65})`;
     } else if (this.lightningState.globalAmbient > 0.02) {
-      const ambientAlpha = Math.min(0.70, dot.alpha + this.lightningState.globalAmbient * 0.55);
+      const ambientAlpha = Math.min(0.70, (dot.alpha || 0.16) + this.lightningState.globalAmbient * 0.55);
       ctx.fillStyle = `rgba(147, 197, 253, ${ambientAlpha})`;
     } else if (dot.rippleIntensity > 0.08) {
-      ctx.fillStyle = `rgba(56, 189, 248, ${dot.alpha})`;
+      ctx.fillStyle = `rgba(56, 189, 248, ${dot.alpha || 0.16})`;
     } else {
-      ctx.fillStyle = `rgba(226, 232, 240, ${dot.alpha})`;
+      ctx.fillStyle = `rgba(226, 232, 240, ${dot.alpha || 0.16})`;
     }
 
     ctx.fill();

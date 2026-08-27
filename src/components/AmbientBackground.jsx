@@ -9,7 +9,6 @@ export default function AmbientBackground({ mode = 'shockwave' }) {
   const activeModeRef = useRef(null);
 
   useEffect(() => {
-    // Mode strategy routing
     if (mode === 'rain') {
       activeModeRef.current = new RainMode();
     } else if (mode === 'embers') {
@@ -63,7 +62,6 @@ export default function AmbientBackground({ mode = 'shockwave' }) {
 
     initGrid();
 
-    // Main Engine Render Loop
     const render = () => {
       ctx.clearRect(0, 0, width, height);
       const activeHandler = activeModeRef.current;
@@ -76,10 +74,10 @@ export default function AmbientBackground({ mode = 'shockwave' }) {
       // 2. Ripple Processing
       for (let i = ripples.length - 1; i >= 0; i--) {
         const rip = ripples[i];
-        rip.currentRadius += rip.speed;
-        rip.strength *= rip.decay;
+        rip.currentRadius += rip.speed || 3;
+        rip.strength *= rip.decay || 0.9;
 
-        if (rip.strength < 0.01 || rip.currentRadius > rip.maxRadius) {
+        if (rip.strength < 0.01 || rip.currentRadius > (rip.maxRadius || 100)) {
           ripples.splice(i, 1);
         }
       }
@@ -137,27 +135,37 @@ export default function AmbientBackground({ mode = 'shockwave' }) {
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#07090e]">
       {/* Dynamic Ambient Backlight Orbs */}
       <div 
-        className={`absolute top-[-10%] left-[-10%] w-[650px] h-[650px] rounded-full blur-[140px] animate-float-slow transition-all duration-700 ${
-          mode === 'embers' ? 'bg-amber-600/20' : mode === 'rain' ? 'bg-cyan-600/20' : 'bg-indigo-600/20'
+        className={`absolute -top-16 -left-16 w-[340px] h-[340px] sm:w-[650px] sm:h-[650px] rounded-full blur-[90px] sm:blur-[140px] animate-float-slow transition-all duration-700 ${
+          mode === 'embers' 
+            ? 'bg-amber-600/15 sm:bg-amber-600/20' 
+            : mode === 'rain' 
+            ? 'bg-cyan-600/15 sm:bg-cyan-600/20' 
+            : 'bg-indigo-600/15 sm:bg-indigo-600/20'
         }`} 
       />
+
       <div 
-        className={`absolute bottom-[-10%] right-[-10%] w-[750px] h-[750px] rounded-full blur-[150px] animate-float-reverse transition-all duration-700 ${
-          mode === 'embers' ? 'bg-red-600/15' : mode === 'rain' ? 'bg-blue-600/15' : 'bg-cyan-600/15'
+        className={`absolute -bottom-16 -right-16 w-[320px] h-[320px] sm:w-[750px] sm:h-[750px] rounded-full blur-[100px] sm:blur-[150px] animate-float-reverse transition-all duration-700 ${
+          mode === 'embers' 
+            ? 'bg-red-600/10 sm:bg-red-600/15' 
+            : mode === 'rain' 
+            ? 'bg-blue-600/10 sm:bg-blue-600/15' 
+            : 'bg-cyan-600/10 sm:bg-cyan-600/15'
         }`} 
       />
+
       <div 
-        className={`absolute top-[35%] left-[30%] w-[500px] h-[500px] rounded-full blur-[140px] animate-pulse-slow transition-all duration-700 ${
+        className={`hidden sm:block absolute top-[35%] left-[30%] w-[500px] h-[500px] rounded-full blur-[140px] animate-pulse-slow transition-all duration-700 ${
           mode === 'embers' ? 'bg-orange-600/15' : mode === 'rain' ? 'bg-sky-600/10' : 'bg-fuchsia-600/10'
         }`} 
       />
 
-      {/* Main Canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
+      {/* Interactive Dot Matrix Canvas */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block z-10" />
 
-      {/* Analog Noise Filter */}
+      {/* Analog Film Grain Texture */}
       <div 
-        className="absolute inset-0 opacity-[0.035] mix-blend-overlay pointer-events-none"
+        className="absolute inset-0 opacity-[0.035] mix-blend-overlay pointer-events-none z-20"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
         }}
