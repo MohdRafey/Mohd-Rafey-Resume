@@ -1,0 +1,98 @@
+/* ========================================================= */
+/* DYNAMIC ACCENT PALETTES & THEME TOKENS                    */
+/* ========================================================= */
+
+:root,
+[data-theme="shockwave"] {
+  --color-brand-dark: #07090e;
+  --color-brand-navy: #0f172a;
+  --color-brand-muted: #94a3b8;
+  --color-brand-surface: #0f172a;
+
+  /* Shockwave Mode (Indigo/Purple) */
+  --accent-primary: #6366f1;
+  --accent-light: #a5b4fc;
+  --accent-glow: rgba(99, 102, 241, 0.35);
+  --accent-border-fringe: rgba(165, 180, 252, 0.5);
+  --accent-border-back: rgba(99, 102, 241, 0.35);
+  --accent-flare: rgba(129, 140, 248, 0.05);
+}
+
+[data-theme="rain"] {
+  --color-brand-dark: #07090e;
+  --color-brand-navy: #0f172a;
+  --color-brand-muted: #94a3b8;
+  --color-brand-surface: #0f172a;
+
+  /* Digital Rain Mode (Electric Cyan/Ice Blue) */
+  --accent-primary: #38bdf8;
+  --accent-light: #bae6fd;
+  --accent-glow: rgba(56, 189, 248, 0.35);
+  --accent-border-fringe: rgba(186, 230, 253, 0.55);
+  --accent-border-back: rgba(56, 189, 248, 0.35);
+  --accent-flare: rgba(56, 189, 248, 0.05);
+}
+
+[data-theme="embers"] {
+  --color-brand-dark: #07090e;
+  --color-brand-navy: #0f172a;
+  --color-brand-muted: #94a3b8;
+  --color-brand-surface: #0f172a;
+
+  /* Fire Embers Mode (Molten Amber/Warm Gold) */
+  --accent-primary: #f59e0b;
+  --accent-light: #fde68a;
+  --accent-glow: rgba(245, 158, 11, 0.35);
+  --accent-border-fringe: rgba(253, 230, 138, 0.55);
+  --accent-border-back: rgba(245, 158, 11, 0.35);
+  --accent-flare: rgba(245, 158, 11, 0.05);
+}
+
+[data-theme="light"] {
+  /* Light Mode (Soft Opal & Deep Slate Navy) */
+  --color-brand-dark: #F3F2F8;
+  --color-brand-navy: #ffffff;
+  --color-brand-muted: #525875;
+  --color-brand-surface: #ffffff;
+
+  --text-primary: #111633;
+  --text-secondary: #525875;
+  --button-primary-bg: #1C2951;
+  --button-primary-text: #ffffff;
+  --tag-bg: rgba(255, 255, 255, 0.75);
+  --tag-text: #4A5899;
+
+  --accent-primary: #1C2951;
+  --accent-light: #4A5899;
+  --accent-glow: rgba(28, 41, 81, 0.08);
+  --accent-border-fringe: rgba(255, 255, 255, 0.95);
+  --accent-border-back: rgba(255, 255, 255, 0.7);
+  --accent-flare: rgba(255, 255, 255, 0.4);
+}
+
+@theme {
+  --color-brand-dark: var(--color-brand-dark);
+  --color-brand-navy: var(--color-brand-navy);
+  --color-brand-accent: var(--accent-primary);
+  --color-brand-muted: var(--color-brand-muted);
+  --color-brand-surface: var(--color-brand-surface);
+
+  --animate-float-slow: float-slow 14s ease-in-out infinite;
+  --animate-float-reverse: float-reverse 18s ease-in-out infinite;
+  --animate-pulse-slow: pulse-slow 10s ease-in-out infinite;
+
+  @keyframes float-slow {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(-25px, -20px) scale(1.06); }
+  }
+
+  @keyframes float-reverse {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(25px, 20px) scale(0.96); }
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% { transform: scale(1); opacity: 0.15; }
+    50% { transform: scale(1.1); opacity: 0.25; }
+  }
+}

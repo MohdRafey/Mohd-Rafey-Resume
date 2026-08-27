@@ -6,15 +6,42 @@ import Studio3DPage from './pages/Studio3DPage';
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
-  const [interactiveMode, setInteractiveMode] = useState('shockwave');
+  const [interactiveMode, setInteractiveMode] = useState('light');
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Sync data-theme attribute on root HTML for dynamic CSS variables
+  const isLight = interactiveMode === 'light';
+
+  // Smooth mode change with dip-to-black veil
+  const handleModeChange = (newMode) => {
+    if (newMode === interactiveMode || isTransitioning) return;
+
+    const isCurrentLight = interactiveMode === 'light';
+    const isNextLight = newMode === 'light';
+    const isCrossingThemeBoundary = isCurrentLight !== isNextLight;
+
+    if (isCrossingThemeBoundary) {
+      // 1. Cross-theme transition: Dip to black
+      setIsTransitioning(true);
+
+      setTimeout(() => {
+        setInteractiveMode(newMode);
+      }, 250);
+
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 350);
+    } else {
+      // 2. Dark-to-Dark transition (Shockwave <-> Rain <-> Embers): Instant switch
+      setInteractiveMode(newMode);
+    }
+  };
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', interactiveMode);
   }, [interactiveMode]);
 
-  // Smooth scroll interpolation for top navbar
+  // Smooth scroll interpolation
   useEffect(() => {
     let ticking = false;
     const MAX_SCROLL_DISTANCE = 140;
@@ -41,15 +68,25 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Interpolated Navbar geometry
   const navPaddingTop = (1 - scrollProgress) * 16;
   const navPaddingX = (1 - scrollProgress) * 20;
   const currentRadius = Math.round((1 - scrollProgress) * 32);
-  const navRadius = `${currentRadius}px`; 
+  const navRadius = `${currentRadius}px`;
 
   return (
-    <div className="min-h-screen w-full relative text-slate-100 overflow-x-hidden selection:bg-brand-accent selection:text-white flex flex-col items-center">
-      
+    <div 
+      data-theme={interactiveMode}
+      className={`min-h-screen w-full relative overflow-x-hidden selection:bg-brand-accent selection:text-white flex flex-col items-center transition-colors duration-500 ${
+        isLight ? 'text-[#111633]' : 'text-slate-100'
+      }`}
+    >
+      {/* Cinematic Dip-to-Black Veil */}
+      <div 
+        className={`fixed inset-0 z-[100] bg-[#07090e] pointer-events-none transition-opacity duration-300 ease-in-out ${
+          isTransitioning ? 'opacity-100' : 'opacity-0'
+        }`} 
+      />
+
       {/* 1. Global Refraction Displacement Shader */}
       <RefractionFilter />
 
@@ -57,13 +94,17 @@ export default function App() {
       <AmbientBackground mode={interactiveMode} />
 
       {/* 3. Floating Interactive Mode Switcher Pill */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-1 p-1 rounded-full bg-slate-950/85 backdrop-blur-xl border border-white/15 shadow-2xl">
+      <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-1 p-1 rounded-full backdrop-blur-xl border shadow-2xl transition-all ${
+        isLight 
+          ? 'bg-white/80 border-black/10 shadow-indigo-950/10' 
+          : 'bg-slate-950/85 border-white/15 shadow-black/80'
+      }`}>
         <button
-          onClick={() => setInteractiveMode('shockwave')}
-          className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border-none ${
+          onClick={() => handleModeChange('shockwave')}
+          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border-none ${
             interactiveMode === 'shockwave'
               ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30 scale-100'
-              : 'bg-transparent text-slate-400 hover:text-white'
+              : isLight ? 'bg-transparent text-[#525875] hover:text-[#111633]' : 'bg-transparent text-slate-400 hover:text-white'
           }`}
         >
           <span>⚡</span>
@@ -71,11 +112,11 @@ export default function App() {
         </button>
 
         <button
-          onClick={() => setInteractiveMode('rain')}
-          className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border-none ${
+          onClick={() => handleModeChange('rain')}
+          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border-none ${
             interactiveMode === 'rain'
               ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 scale-100'
-              : 'bg-transparent text-slate-400 hover:text-white'
+              : isLight ? 'bg-transparent text-[#525875] hover:text-[#111633]' : 'bg-transparent text-slate-400 hover:text-white'
           }`}
         >
           <span>🌧️</span>
@@ -83,15 +124,27 @@ export default function App() {
         </button>
 
         <button
-          onClick={() => setInteractiveMode('embers')}
-          className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border-none ${
+          onClick={() => handleModeChange('embers')}
+          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border-none ${
             interactiveMode === 'embers'
               ? 'bg-gradient-to-r from-amber-500 to-red-600 text-white shadow-lg shadow-amber-500/30 scale-100'
-              : 'bg-transparent text-slate-400 hover:text-white'
+              : isLight ? 'bg-transparent text-[#525875] hover:text-[#111633]' : 'bg-transparent text-slate-400 hover:text-white'
           }`}
         >
           <span>🔥</span>
           <span>Embers</span>
+        </button>
+
+        <button
+          onClick={() => handleModeChange('light')}
+          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border-none ${
+            interactiveMode === 'light'
+              ? 'bg-[#1C2951] text-white shadow-lg shadow-indigo-950/30 scale-100'
+              : isLight ? 'bg-transparent text-[#525875] hover:text-[#111633]' : 'bg-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          <span>✨</span>
+          <span>Light</span>
         </button>
       </div>
 
@@ -104,20 +157,20 @@ export default function App() {
           paddingRight: `${navPaddingX}px`
         }}
       >
-<header 
-  className={`ios-glass-nav-fluid pointer-events-auto flex items-center justify-between transition-all duration-300 ${
-    scrollProgress >= 0.98 ? 'is-docked' : ''
-  }`}
-  style={{
-    width: '100%',
-    maxWidth: scrollProgress >= 0.98 ? '100%' : `${1024 + scrollProgress * (typeof window !== 'undefined' && window.innerWidth > 1024 ? window.innerWidth - 1024 : 0)}px`,
-    borderRadius: scrollProgress >= 0.98 ? '0px' : navRadius,
-    paddingTop: `${14 - scrollProgress * 2}px`,
-    paddingBottom: `${14 - scrollProgress * 2}px`,
-    paddingLeft: `${24 + scrollProgress * 16}px`,
-    paddingRight: `${24 + scrollProgress * 16}px`
-  }}
->
+        <header 
+          className={`ios-glass-nav-fluid pointer-events-auto flex items-center justify-between transition-all duration-300 ${
+            scrollProgress >= 0.98 ? 'is-docked' : ''
+          }`}
+          style={{
+            width: '100%',
+            maxWidth: scrollProgress >= 0.98 ? '100%' : `${1024 + scrollProgress * (typeof window !== 'undefined' && window.innerWidth > 1024 ? window.innerWidth - 1024 : 0)}px`,
+            borderRadius: scrollProgress >= 0.98 ? '0px' : navRadius,
+            paddingTop: `${14 - scrollProgress * 2}px`,
+            paddingBottom: `${14 - scrollProgress * 2}px`,
+            paddingLeft: `${24 + scrollProgress * 16}px`,
+            paddingRight: `${24 + scrollProgress * 16}px`
+          }}
+        >
           <div className="w-full max-w-5xl mx-auto flex items-center justify-between">
             <button 
               onClick={() => navigateTo('home')} 
@@ -130,27 +183,48 @@ export default function App() {
                 MR
               </div>
               <div>
-                <span className="font-extrabold text-sm tracking-tight text-white block leading-none">Mohd Rafey</span>
-                <span className="text-[10px] text-slate-400 font-semibold tracking-wide">Systems &amp; 3D</span>
+                <span className={`font-extrabold text-sm tracking-tight block leading-none ${
+                  isLight ? 'text-[#111633]' : 'text-white'
+                }`}>
+                  Mohd Rafey
+                </span>
+                <span className={`text-[10px] font-semibold tracking-wide ${
+                  isLight ? 'text-[#525875]' : 'text-slate-400'
+                }`}>
+                  Systems &amp; 3D
+                </span>
               </div>
             </button>
 
             <nav className="hidden sm:flex items-center gap-8 text-sm font-semibold">
               <button 
                 onClick={() => navigateTo('home')}
-                className="transition-all cursor-pointer bg-transparent border-none p-0"
-                style={{ color: activePage === 'home' ? 'var(--accent-primary)' : '#94a3b8' }}
+                className={`transition-colors cursor-pointer bg-transparent border-none p-0 ${
+                  activePage === 'home'
+                    ? (isLight ? 'text-[#111633] font-bold' : 'text-white font-bold')
+                    : (isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white')
+                }`}
               >
                 Home
               </button>
+
               <button 
                 onClick={() => navigateTo('3d-designs')}
-                className="transition-all cursor-pointer bg-transparent border-none p-0"
-                style={{ color: activePage === '3d-designs' ? 'var(--accent-primary)' : '#94a3b8' }}
+                className={`transition-colors cursor-pointer bg-transparent border-none p-0 ${
+                  activePage === '3d-designs'
+                    ? (isLight ? 'text-[#111633] font-bold' : 'text-white font-bold')
+                    : (isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white')
+                }`}
               >
                 3D Studio
               </button>
-              <a href="#contact" className="text-slate-400 hover:text-white transition-colors">
+
+              <a 
+                href="#contact" 
+                className={`transition-colors no-underline ${
+                  isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white'
+                }`}
+              >
                 Contact
               </a>
             </nav>
@@ -180,8 +254,14 @@ export default function App() {
         {/* PERSISTENT FOOTER */}
         <footer id="contact" className="w-full mt-10">
           <div className="text-center p-8 sm:p-12 ios-glass-panel">
-            <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">Let's Build Something Resilient.</h2>
-            <p className="text-slate-400 mb-8 text-sm max-w-md mx-auto font-normal">
+            <h2 className={`text-2xl sm:text-3xl font-black mb-2 ${
+              isLight ? 'text-[#111633]' : 'text-white'
+            }`}>
+              Let's Build Something Resilient.
+            </h2>
+            <p className={`mb-8 text-sm max-w-md mx-auto font-normal ${
+              isLight ? 'text-[#525875]' : 'text-slate-400'
+            }`}>
               Open for technical collaboration, architecture discussions, and custom 3D environment visualization.
             </p>
             <a 
@@ -192,7 +272,9 @@ export default function App() {
               <span>Send a Message</span>
               <span>→</span>
             </a>
-            <div className="mt-10 pt-6 border-t border-white/5 text-xs text-slate-500 font-medium">
+            <div className={`mt-10 pt-6 border-t text-xs font-medium ${
+              isLight ? 'border-[#1C2951]/10 text-[#525875]' : 'border-white/5 text-slate-500'
+            }`}>
               © 2026 Mohd Rafey. Crafted with React, Tailwind CSS &amp; Vite.
             </div>
           </div>

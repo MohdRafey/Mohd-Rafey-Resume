@@ -4,21 +4,26 @@ import { ShockwaveMode } from '../canvas/ShockwaveMode';
 import { RainMode } from '../canvas/RainMode';
 import { EmbersMode } from '../canvas/EmbersMode';
 
-export default function AmbientBackground({ mode = 'shockwave' }) {
+export default function AmbientBackground({ mode = 'light' }) {
   const canvasRef = useRef(null);
   const activeModeRef = useRef(null);
+  const isLight = mode === 'light';
 
   useEffect(() => {
     if (mode === 'rain') {
       activeModeRef.current = new RainMode();
     } else if (mode === 'embers') {
       activeModeRef.current = new EmbersMode();
-    } else {
+    } else if (mode === 'shockwave') {
       activeModeRef.current = new ShockwaveMode();
+    } else {
+      activeModeRef.current = null;
     }
   }, [mode]);
 
   useEffect(() => {
+    if (isLight) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d', { alpha: true });
@@ -30,12 +35,7 @@ export default function AmbientBackground({ mode = 'shockwave' }) {
     const DOT_SPACING = 24;
     const FRICTION = 0.74;
 
-    const mouse = {
-      x: -1000,
-      y: -1000,
-      active: false
-    };
-
+    const mouse = { x: -1000, y: -1000, active: false };
     let ripples = [];
     let grid = [];
     let dots = [];
@@ -66,12 +66,10 @@ export default function AmbientBackground({ mode = 'shockwave' }) {
       ctx.clearRect(0, 0, width, height);
       const activeHandler = activeModeRef.current;
 
-      // 1. Delegate active mode state updates
       if (activeHandler && typeof activeHandler.update === 'function') {
         activeHandler.update(grid, cols, rows, ripples, width, height, DOT_SPACING);
       }
 
-      // 2. Ripple Processing
       for (let i = ripples.length - 1; i >= 0; i--) {
         const rip = ripples[i];
         rip.currentRadius += rip.speed || 3;
@@ -82,7 +80,6 @@ export default function AmbientBackground({ mode = 'shockwave' }) {
         }
       }
 
-      // 3. Update & Draw Grid Dots
       for (let i = 0; i < dots.length; i++) {
         dots[i].update(mouse, ripples, activeHandler, FRICTION);
         dots[i].draw(ctx, activeHandler);
@@ -100,9 +97,9 @@ export default function AmbientBackground({ mode = 'shockwave' }) {
     };
 
     const handleMouseLeave = () => {
-      mouse.active = false;
       mouse.x = -1000;
       mouse.y = -1000;
+      mouse.active = false;
     };
 
     const handleClick = (e) => {
@@ -129,47 +126,59 @@ export default function AmbientBackground({ mode = 'shockwave' }) {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [isLight]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#07090e]">
-      {/* Dynamic Ambient Backlight Orbs */}
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      {/* 1. Light Mode Blob Layer */}
       <div 
-        className={`absolute -top-16 -left-16 w-[340px] h-[340px] sm:w-[650px] sm:h-[650px] rounded-full blur-[90px] sm:blur-[140px] animate-float-slow transition-all duration-700 ${
-          mode === 'embers' 
-            ? 'bg-amber-600/15 sm:bg-amber-600/20' 
-            : mode === 'rain' 
-            ? 'bg-cyan-600/15 sm:bg-cyan-600/20' 
-            : 'bg-indigo-600/15 sm:bg-indigo-600/20'
-        }`} 
-      />
-
-      <div 
-        className={`absolute -bottom-16 -right-16 w-[320px] h-[320px] sm:w-[750px] sm:h-[750px] rounded-full blur-[100px] sm:blur-[150px] animate-float-reverse transition-all duration-700 ${
-          mode === 'embers' 
-            ? 'bg-red-600/10 sm:bg-red-600/15' 
-            : mode === 'rain' 
-            ? 'bg-blue-600/10 sm:bg-blue-600/15' 
-            : 'bg-cyan-600/10 sm:bg-cyan-600/15'
-        }`} 
-      />
-
-      <div 
-        className={`hidden sm:block absolute top-[35%] left-[30%] w-[500px] h-[500px] rounded-full blur-[140px] animate-pulse-slow transition-all duration-700 ${
-          mode === 'embers' ? 'bg-orange-600/15' : mode === 'rain' ? 'bg-sky-600/10' : 'bg-fuchsia-600/10'
-        }`} 
-      />
-
-      {/* Interactive Dot Matrix Canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block z-10" />
-
-      {/* Analog Film Grain Texture */}
-      <div 
-        className="absolute inset-0 opacity-[0.035] mix-blend-overlay pointer-events-none z-20"
+        className={`absolute inset-0 bg-[#F3F2F8] transition-opacity duration-500 ease-in-out ${
+          isLight ? 'opacity-100 z-10' : 'opacity-0 z-0'
+        }`}
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+          backgroundImage: `url('/blob.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          backgroundRepeat: 'no-repeat'
         }}
       />
+
+      {/* 2. Dark Mode Canvas & Glows Layer */}
+      <div 
+        className={`absolute inset-0 bg-[#07090e] transition-opacity duration-500 ease-in-out ${
+          !isLight ? 'opacity-100 z-10' : 'opacity-0 z-0'
+        }`}
+      >
+        <div 
+          className={`absolute -top-16 -left-16 w-[340px] h-[340px] sm:w-[650px] sm:h-[650px] rounded-full blur-[90px] sm:blur-[140px] animate-float-slow transition-all duration-700 ${
+            mode === 'embers' 
+              ? 'bg-amber-600/15 sm:bg-amber-600/20' 
+              : mode === 'rain' 
+              ? 'bg-cyan-600/15 sm:bg-cyan-600/20' 
+              : 'bg-indigo-600/15 sm:bg-indigo-600/20'
+          }`} 
+        />
+
+        <div 
+          className={`absolute -bottom-16 -right-16 w-[320px] h-[320px] sm:w-[750px] sm:h-[750px] rounded-full blur-[100px] sm:blur-[150px] animate-float-reverse transition-all duration-700 ${
+            mode === 'embers' 
+              ? 'bg-red-600/10 sm:bg-red-600/15' 
+              : mode === 'rain' 
+              ? 'bg-blue-600/10 sm:bg-blue-600/15' 
+              : 'bg-cyan-600/10 sm:bg-cyan-600/15'
+          }`} 
+        />
+
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block z-10" />
+
+        <div 
+          className="absolute inset-0 opacity-[0.035] mix-blend-overlay pointer-events-none z-20"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+          }}
+        />
+      </div>
     </div>
   );
 }

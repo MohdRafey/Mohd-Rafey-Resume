@@ -1,0 +1,239 @@
+/* ========================================================= */
+/* LIGHT MODE GLASS & TYPOGRAPHY STYLES                      */
+/* ========================================================= */
+
+/* --- 1. Base Glass Panels & Navbar Overrides --- */
+[data-theme="light"] .ios-glass-panel {
+  background: rgba(255, 255, 255, 0.45);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  backdrop-filter: blur(16px) saturate(120%);
+  box-shadow: 
+    0 24px 48px -12px rgba(28, 41, 81, 0.08),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.95);
+  color: #111633;
+}
+
+[data-theme="light"] .ios-glass-panel::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.6) 40%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+}
+
+[data-theme="light"] .ios-glass-panel::after {
+  background: radial-gradient(
+    70% 100% at 50% 0%,
+    rgba(255, 255, 255, 0.6) 0%,
+    transparent 100%
+  );
+}
+
+[data-theme="light"] .ios-glass-panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 28px 56px -12px rgba(28, 41, 81, 0.12),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 1);
+}
+
+[data-theme="light"] .ios-glass-nav-fluid {
+  background: rgba(255, 255, 255, 0.65);
+  -webkit-backdrop-filter: blur(20px) saturate(130%);
+  backdrop-filter: blur(20px) saturate(130%);
+  box-shadow: 
+    0 10px 30px -10px rgba(28, 41, 81, 0.06),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.95);
+}
+
+[data-theme="light"] .ios-glass-nav-fluid::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.6) 40%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+}
+
+[data-theme="light"] .ios-glass-nav-fluid::after {
+  background: radial-gradient(
+    70% 100% at 50% 0%,
+    rgba(255, 255, 255, 0.5) 0%,
+    transparent 100%
+  );
+}
+
+/* --- 2. Typography, Headings & Highlights --- */
+[data-theme="light"] .ios-glass-panel h1,
+[data-theme="light"] .ios-glass-panel h2,
+[data-theme="light"] .ios-glass-panel h3,
+[data-theme="light"] .ios-glass-panel h4 {
+  color: #111633 !important;
+  -webkit-text-fill-color: #111633 !important;
+}
+
+[data-theme="light"] .ios-glass-panel p,
+[data-theme="light"] .ios-glass-panel .text-slate-400,
+[data-theme="light"] .ios-glass-panel .text-slate-300 {
+  color: #525875 !important;
+  -webkit-text-fill-color: #525875 !important;
+}
+
+[data-theme="light"] .ios-glass-panel .text-slate-500,
+[data-theme="light"] .ios-glass-panel .text-slate-600 {
+  color: #717899 !important;
+  -webkit-text-fill-color: #717899 !important;
+}
+
+/* Reset gradients in light mode to solid dark navy */
+[data-theme="light"] h1 span[class*="bg-gradient-"],
+[data-theme="light"] h1[class*="bg-gradient-"],
+[data-theme="light"] .ios-glass-panel [class*="bg-gradient-to-r"] {
+  background: transparent !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: #111633 !important;
+  color: #111633 !important;
+}
+
+/* Bold inline body text and company highlights ("SMS Group India Pvt. Ltd.") */
+[data-theme="light"] .ios-glass-panel strong,
+[data-theme="light"] .ios-glass-panel b,
+[data-theme="light"] .ios-glass-panel span[class*="text-white"],
+[data-theme="light"] .ios-glass-panel span[class*="font-semibold"],
+[data-theme="light"] .ios-glass-panel span[class*="font-bold"] {
+  color: #111633 !important;
+  -webkit-text-fill-color: #111633 !important;
+  font-weight: 700;
+}
+
+/* Stat Counter Numbers ("5+ Yrs", "C# / .NET", "Cloud") */
+[data-theme="light"] .ios-glass-panel .text-2xl,
+[data-theme="light"] .ios-glass-panel .text-3xl,
+[data-theme="light"] .ios-glass-panel .text-xl,
+[data-theme="light"] .ios-glass-panel [class*="font-black"],
+[data-theme="light"] .ios-glass-panel [class*="font-extrabold"] {
+  color: #111633 !important;
+  -webkit-text-fill-color: #111633 !important;
+}
+
+/* Stat Counter Subtitles ("ENGINEERING", "ECOSYSTEM", "COMPUTING MAJOR") */
+[data-theme="light"] .ios-glass-panel .text-xs,
+[data-theme="light"] .ios-glass-panel .text-\[10px\],
+[data-theme="light"] .ios-glass-panel [class*="tracking-wider"],
+[data-theme="light"] .ios-glass-panel [class*="tracking-widest"] {
+  color: #525875 !important;
+  -webkit-text-fill-color: #525875 !important;
+}
+
+/* Card Dividers */
+[data-theme="light"] .ios-glass-panel [class*="border-white"] {
+  border-color: rgba(28, 41, 81, 0.08) !important;
+}
+
+/* --- 3. Frosted Glass Section Pill Badges --- */
+/* Matches outer frosted look ("SOFTWARE ENGINEER & SYSTEMS", "SPECIALIZED DOMAINS", etc.) */
+[data-theme="light"] .badge-pill,
+[data-theme="light"] div[class*="rounded-full"][class*="uppercase"],
+[data-theme="light"] span[class*="rounded-full"][class*="uppercase"],
+[data-theme="light"] div[class*="rounded-full"][class*="tracking-"] {
+  background: rgba(255, 255, 255, 0.65) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(130%) !important;
+  backdrop-filter: blur(12px) saturate(130%) !important;
+  color: #4A5899 !important;
+  -webkit-text-fill-color: #4A5899 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 
+    0 10px 25px -5px rgba(28, 41, 81, 0.08), 
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.95) !important;
+  font-weight: 700 !important;
+}
+
+/* Inner Card Tag Pills ("Blender & Shaders", "Cloud Computing Major") */
+[data-theme="light"] .ios-glass-panel span[class*="rounded-full"],
+[data-theme="light"] .ios-glass-panel div[class*="rounded-full"]:not(a):not(button) {
+  background-color: rgba(28, 41, 81, 0.06) !important;
+  color: #4A5899 !important;
+  -webkit-text-fill-color: #4A5899 !important;
+  border: 1px solid rgba(74, 88, 153, 0.22) !important;
+  font-weight: 600 !important;
+}
+
+/* Left Icon Boxes inside Exploration Cards */
+[data-theme="light"] .ios-glass-panel div[class*="rounded-xl"][class*="w-"],
+[data-theme="light"] .ios-glass-panel div[class*="rounded-2xl"][class*="w-"] {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 4px 12px -2px rgba(28, 41, 81, 0.06) !important;
+}
+
+/* --- 4. Navbar Navigation Links (Home, 3D Studio, Contact) --- */
+[data-theme="light"] .ios-glass-nav-fluid nav a,
+[data-theme="light"] .ios-glass-nav-fluid nav button {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Unselected nav links (Slate Gray with Dark Hover) */
+[data-theme="light"] .ios-glass-nav-fluid nav a,
+[data-theme="light"] .ios-glass-nav-fluid nav button:not(.font-bold) {
+  color: #525875 !important;
+  -webkit-text-fill-color: #525875 !important;
+}
+
+[data-theme="light"] .ios-glass-nav-fluid nav a:hover,
+[data-theme="light"] .ios-glass-nav-fluid nav button:hover {
+  color: #111633 !important;
+  -webkit-text-fill-color: #111633 !important;
+}
+
+/* Selected active tab (Deep Navy Bold) */
+[data-theme="light"] .ios-glass-nav-fluid nav button.font-bold {
+  color: #111633 !important;
+  -webkit-text-fill-color: #111633 !important;
+}
+
+/* --- 5. Action Links on Cards ("Explore 3D Studio →", "View Architecture →") --- */
+[data-theme="light"] .ios-glass-panel a:not([class*="rounded-full"]) {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: #1C2951 !important;
+  -webkit-text-fill-color: #1C2951 !important;
+  text-decoration: none !important;
+}
+
+[data-theme="light"] .ios-glass-panel a:not([class*="rounded-full"]):hover,
+[data-theme="light"] .ios-glass-panel a:not([class*="rounded-full"]):hover * {
+  color: #4A5899 !important;
+  -webkit-text-fill-color: #4A5899 !important;
+}
+
+/* --- 6. Explicit Pill CTA Buttons (Primary & Secondary Actions) --- */
+/* Primary action button (e.g., "Launch 3D Studio", Nav "Connect", Footer "Send a Message") */
+[data-theme="light"] .ios-glass-nav-fluid > div > a[href="#contact"],
+[data-theme="light"] footer a[href^="mailto:"],
+[data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:first-of-type {
+  background-color: #1C2951 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: 0 8px 20px -4px rgba(28, 41, 81, 0.25) !important;
+}
+
+[data-theme="light"] .ios-glass-nav-fluid > div > a[href="#contact"] *,
+[data-theme="light"] footer a[href^="mailto:"] *,
+[data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:first-of-type * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Secondary glass button (e.g., "Get In Touch" hero button) */
+[data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:not(:first-of-type) {
+  background: rgba(255, 255, 255, 0.65) !important;
+  color: #1C2951 !important;
+  -webkit-text-fill-color: #1C2951 !important;
+  border: 1.5px solid rgba(28, 41, 81, 0.2) !important;
+  box-shadow: 0 6px 16px -4px rgba(28, 41, 81, 0.06) !important;
+}
