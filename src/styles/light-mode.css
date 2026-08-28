@@ -2,65 +2,41 @@
 /* LIGHT MODE GLASS & TYPOGRAPHY STYLES                      */
 /* ========================================================= */
 
-/* --- 1. Base Glass Panels & Navbar Overrides --- */
-[data-theme="light"] .ios-glass-panel {
-  background: rgba(255, 255, 255, 0.45);
-  -webkit-backdrop-filter: blur(16px) saturate(120%);
-  backdrop-filter: blur(16px) saturate(120%);
-  box-shadow: 
-    0 24px 48px -12px rgba(28, 41, 81, 0.08),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 0.95);
+/* --- 1. Base Glass Panels & Navbar Overrides (Exact Tray Match) --- */
+[data-theme="light"] .ios-glass-panel,
+[data-theme="light"] .ios-glass-nav-fluid {
+  background: rgba(255, 255, 255, 0.40) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+  backdrop-filter: blur(20px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 4px 20px -2px rgba(28, 41, 81, 0.05) !important;
   color: #111633;
 }
 
-[data-theme="light"] .ios-glass-panel::before {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.6) 40%,
-    rgba(255, 255, 255, 0.85) 100%
-  );
-}
-
-[data-theme="light"] .ios-glass-panel::after {
-  background: radial-gradient(
-    70% 100% at 50% 0%,
-    rgba(255, 255, 255, 0.6) 0%,
-    transparent 100%
-  );
-}
-
-[data-theme="light"] .ios-glass-panel:hover {
-  transform: translateY(-4px);
-  box-shadow: 
-    0 28px 56px -12px rgba(28, 41, 81, 0.12),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 1);
-}
-
-[data-theme="light"] .ios-glass-nav-fluid {
-  background: rgba(255, 255, 255, 0.65);
-  -webkit-backdrop-filter: blur(20px) saturate(130%);
-  backdrop-filter: blur(20px) saturate(130%);
-  box-shadow: 
-    0 10px 30px -10px rgba(28, 41, 81, 0.06),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 0.95);
-}
-
-[data-theme="light"] .ios-glass-nav-fluid::before {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.6) 40%,
-    rgba(255, 255, 255, 0.85) 100%
-  );
-}
-
+/* Strip all opaque gradient pseudo-elements from panels & navbar */
+[data-theme="light"] .ios-glass-panel::before,
+[data-theme="light"] .ios-glass-panel::after,
+[data-theme="light"] .ios-glass-nav-fluid::before,
 [data-theme="light"] .ios-glass-nav-fluid::after {
-  background: radial-gradient(
-    70% 100% at 50% 0%,
-    rgba(255, 255, 255, 0.5) 0%,
-    transparent 100%
-  );
+  display: none !important;
+  opacity: 0 !important;
+  background: none !important;
+  border: none !important;
+}
+
+/* Subtle hover elevation for interactive panels */
+[data-theme="light"] .ios-glass-panel:hover {
+  transform: none !important;
+  background: rgba(255, 255, 255, 0.48) !important;
+  border: 1px solid rgba(255, 255, 255, 0.60) !important;
+  box-shadow: 0 6px 24px -2px rgba(28, 41, 81, 0.08) !important;
+}
+
+[data-theme="light"] .ios-glass-nav-fluid::before,
+[data-theme="light"] .ios-glass-nav-fluid::after {
+  display: none !important;
+  opacity: 0 !important;
+  background: none !important;
 }
 
 /* --- 2. Typography, Headings & Highlights --- */
@@ -136,34 +112,34 @@
 [data-theme="light"] div[class*="rounded-full"][class*="uppercase"]:not(.category-dot):not(.category-spine-dot),
 [data-theme="light"] span[class*="rounded-full"][class*="uppercase"]:not(.category-dot):not(.category-spine-dot),
 [data-theme="light"] div[class*="rounded-full"][class*="tracking-"]:not(.category-dot):not(.category-spine-dot) {
-  background: rgba(255, 255, 255, 0.65) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(130%) !important;
-  backdrop-filter: blur(12px) saturate(130%) !important;
+  background: rgba(255, 255, 255, 0.45) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(130%) !important;
+  backdrop-filter: blur(16px) saturate(130%) !important;
   color: #4A5899 !important;
   -webkit-text-fill-color: #4A5899 !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.75) !important;
   box-shadow: 
-    0 10px 25px -5px rgba(28, 41, 81, 0.08), 
-    inset 0 1px 2px 0 rgba(255, 255, 255, 0.95) !important;
+    0 4px 16px -2px rgba(28, 41, 81, 0.06), 
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95) !important;
   font-weight: 700 !important;
 }
 
 /* Inner Card Tag Pills */
 [data-theme="light"] .ios-glass-panel span[class*="rounded-full"]:not(.category-dot):not(.category-spine-dot),
 [data-theme="light"] .ios-glass-panel div[class*="rounded-full"]:not(a):not(button):not(.category-dot):not(.category-spine-dot) {
-  background-color: rgba(28, 41, 81, 0.06) !important;
+  background-color: rgba(28, 41, 81, 0.05) !important;
   color: #4A5899 !important;
   -webkit-text-fill-color: #4A5899 !important;
-  border: 1px solid rgba(74, 88, 153, 0.22) !important;
+  border: 1px solid rgba(74, 88, 153, 0.2) !important;
   font-weight: 600 !important;
 }
 
 /* Left Icon Boxes inside Exploration Cards */
 [data-theme="light"] .ios-glass-panel div[class*="rounded-xl"][class*="w-"],
 [data-theme="light"] .ios-glass-panel div[class*="rounded-2xl"][class*="w-"] {
-  background-color: rgba(255, 255, 255, 0.85) !important;
-  border: 1px solid rgba(255, 255, 255, 0.95) !important;
-  box-shadow: 0 4px 12px -2px rgba(28, 41, 81, 0.06) !important;
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 4px 12px -2px rgba(28, 41, 81, 0.05) !important;
 }
 
 /* --- 4. Navbar Navigation Links --- */
@@ -229,9 +205,9 @@
 
 /* Secondary glass button */
 [data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:not(:first-of-type) {
-  background: rgba(255, 255, 255, 0.65) !important;
+  background: rgba(255, 255, 255, 0.55) !important;
   color: #1C2951 !important;
   -webkit-text-fill-color: #1C2951 !important;
-  border: 1.5px solid rgba(28, 41, 81, 0.2) !important;
-  box-shadow: 0 6px 16px -4px rgba(28, 41, 81, 0.06) !important;
+  border: 1px solid rgba(28, 41, 81, 0.15) !important;
+  box-shadow: 0 6px 16px -4px rgba(28, 41, 81, 0.05) !important;
 }

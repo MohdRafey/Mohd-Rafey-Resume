@@ -170,10 +170,10 @@ const yearlyMilestones = [
 ];
 
 const filterOptions = [
-  { id: 'All', label: 'All', icon: '✨', activeClass: 'bg-[var(--accent-primary)] text-white shadow-lg shadow-indigo-500/30 scale-100' },
-  { id: 'Career', label: 'Career', icon: '💼', activeClass: 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 scale-100' },
-  { id: 'Academics', label: 'Academics', icon: '🎓', activeClass: 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/30 scale-100' },
-  { id: 'Hobby', label: 'Hobby', icon: '🎮', activeClass: 'bg-amber-600 text-white shadow-lg shadow-amber-500/30 scale-100' }
+  { id: 'All', label: 'All', icon: '✨' },
+  { id: 'Career', label: 'Career', icon: '💼' },
+  { id: 'Academics', label: 'Academics', icon: '🎓' },
+  { id: 'Hobby', label: 'Hobby', icon: '🎮' }
 ];
 
 export default function ResumePage({ onNavigate, isLight = false }) {
@@ -310,12 +310,12 @@ interest in learning new technologies and programming languages.
 
           {/* C. THEMED PILL SELECTOR */}
           <div className="w-full flex justify-center mb-6 z-30">
-            <PillSelector
-              items={filterOptions}
-              activeId={activeFilter}
-              onChange={(newId) => setActiveFilter(newId)}
-              isLight={isLight}
-            />
+<PillSelector
+  items={filterOptions}
+  activeId={activeFilter}
+  onChange={(newId) => setActiveFilter(newId)}
+  isLight={isLight}
+/>
           </div>
 
           {/* D. HORIZONTAL TIMELINE COLUMNS */}

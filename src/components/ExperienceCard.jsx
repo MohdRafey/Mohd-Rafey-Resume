@@ -25,7 +25,15 @@ export default function ExperienceCard({
   const dotColor = TAG_DOT_COLORS[tag] || DEFAULT_DOT_COLOR;
 
   return (
-    <div className="ios-glass-panel p-4 w-full relative transition-all duration-300 hover:-translate-y-1 group">
+    <div 
+      className="ios-glass-panel p-4 w-full relative transition-colors duration-200 group rounded-2xl"
+      style={{
+        isolation: 'isolate',
+        WebkitBackfaceVisibility: 'hidden',
+        backfaceVisibility: 'hidden',
+        transform: 'translateZ(0)'
+      }}
+    >
       
       {/* 1. Left Vertical Spine Node */}
       <div 
