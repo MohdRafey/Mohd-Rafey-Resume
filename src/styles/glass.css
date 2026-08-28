@@ -69,6 +69,8 @@
   border-radius: inherit;
   pointer-events: none;
   transition: background 0.6s ease;
+  display: none !important;
+  content: none !important;
 }
 
 /* --- B. Expanding Fluid Navbar --- */

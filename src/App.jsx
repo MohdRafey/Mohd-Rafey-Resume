@@ -237,7 +237,7 @@ export default function App() {
         </header>
       </div>
 
-      <div className="h-28 w-full" />
+      <div className="h-24 w-full" />
 
       {/* Main Page Content Router */}
       <main className="relative z-10 w-full flex flex-col items-center pb-24">

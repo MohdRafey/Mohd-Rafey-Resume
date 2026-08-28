@@ -65,22 +65,22 @@ export default function HomePage({ onNavigate }) {
   return (
     <div className="w-full flex flex-col items-center animate-fadeIn">
 
-      {/* MOBILE-ONLY EXPERIENCE NOTICE */}
-      <div className="w-full block md:hidden mb-6">
-        <div className="ios-glass-panel p-4 flex items-center gap-3.5 !rounded-2xl border border-white/40 shadow-md">
-          <div className="w-9 h-9 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-base">
-            🖥️
-          </div>
-          <div className="text-left">
-            <p className="text-xs font-bold leading-tight mb-0.5 text-[#111633] dark:text-white">
-              Interactive Desktop Experience
-            </p>
-            <p className="text-[11px] leading-snug text-[#525875] dark:text-slate-300">
-              This site features interactive canvas shaders and 3D scenes best experienced on a desktop screen.
-            </p>
-          </div>
-        </div>
-      </div>
+{/* MOBILE-ONLY EXPERIENCE NOTICE */}
+<div className="w-full block md:hidden -mt-4 mb-4">
+  <div className="ios-glass-panel py-3 px-4 flex items-center gap-3.5 !rounded-2xl border border-white/40 shadow-sm">
+    <div className="w-9 h-9 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-base">
+      🖥️
+    </div>
+    <div className="text-left">
+      <p className="text-xs font-bold leading-tight mb-0.5 text-[#111633] dark:text-white">
+        Interactive Desktop Experience
+      </p>
+      <p className="text-[11px] leading-snug text-[#525875] dark:text-slate-300">
+        This site features interactive canvas shaders and 3D scenes best experienced on a desktop screen.
+      </p>
+    </div>
+  </div>
+</div>
 
       {/* HERO CARD */}
       <section className="w-full mb-14">
