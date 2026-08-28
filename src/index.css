@@ -7,9 +7,8 @@ html, body {
   background-color: #07090e;
   color: #f8fafc;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  overflow-x: hidden;
+  overflow-x: clip; /* 'clip' preserves position: sticky whereas 'hidden' breaks it */
 }
-
 /* 2. Modular Sub-systems */
 @import "./styles/themes.css";
 @import "./styles/glass.css";

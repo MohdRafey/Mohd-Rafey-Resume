@@ -96,7 +96,7 @@
   color: #111633 !important;
 }
 
-/* Bold inline body text and company highlights ("SMS Group India Pvt. Ltd.") */
+/* Bold inline body text and company highlights */
 [data-theme="light"] .ios-glass-panel strong,
 [data-theme="light"] .ios-glass-panel b,
 [data-theme="light"] .ios-glass-panel span[class*="text-white"],
@@ -107,7 +107,7 @@
   font-weight: 700;
 }
 
-/* Stat Counter Numbers ("5+ Yrs", "C# / .NET", "Cloud") */
+/* Stat Counter Numbers */
 [data-theme="light"] .ios-glass-panel .text-2xl,
 [data-theme="light"] .ios-glass-panel .text-3xl,
 [data-theme="light"] .ios-glass-panel .text-xl,
@@ -117,7 +117,7 @@
   -webkit-text-fill-color: #111633 !important;
 }
 
-/* Stat Counter Subtitles ("ENGINEERING", "ECOSYSTEM", "COMPUTING MAJOR") */
+/* Stat Counter Subtitles */
 [data-theme="light"] .ios-glass-panel .text-xs,
 [data-theme="light"] .ios-glass-panel .text-\[10px\],
 [data-theme="light"] .ios-glass-panel [class*="tracking-wider"],
@@ -132,11 +132,10 @@
 }
 
 /* --- 3. Frosted Glass Section Pill Badges --- */
-/* Matches outer frosted look ("SOFTWARE ENGINEER & SYSTEMS", "SPECIALIZED DOMAINS", etc.) */
 [data-theme="light"] .badge-pill,
-[data-theme="light"] div[class*="rounded-full"][class*="uppercase"],
-[data-theme="light"] span[class*="rounded-full"][class*="uppercase"],
-[data-theme="light"] div[class*="rounded-full"][class*="tracking-"] {
+[data-theme="light"] div[class*="rounded-full"][class*="uppercase"]:not(.category-dot):not(.category-spine-dot),
+[data-theme="light"] span[class*="rounded-full"][class*="uppercase"]:not(.category-dot):not(.category-spine-dot),
+[data-theme="light"] div[class*="rounded-full"][class*="tracking-"]:not(.category-dot):not(.category-spine-dot) {
   background: rgba(255, 255, 255, 0.65) !important;
   -webkit-backdrop-filter: blur(12px) saturate(130%) !important;
   backdrop-filter: blur(12px) saturate(130%) !important;
@@ -149,9 +148,9 @@
   font-weight: 700 !important;
 }
 
-/* Inner Card Tag Pills ("Blender & Shaders", "Cloud Computing Major") */
-[data-theme="light"] .ios-glass-panel span[class*="rounded-full"],
-[data-theme="light"] .ios-glass-panel div[class*="rounded-full"]:not(a):not(button) {
+/* Inner Card Tag Pills */
+[data-theme="light"] .ios-glass-panel span[class*="rounded-full"]:not(.category-dot):not(.category-spine-dot),
+[data-theme="light"] .ios-glass-panel div[class*="rounded-full"]:not(a):not(button):not(.category-dot):not(.category-spine-dot) {
   background-color: rgba(28, 41, 81, 0.06) !important;
   color: #4A5899 !important;
   -webkit-text-fill-color: #4A5899 !important;
@@ -167,7 +166,7 @@
   box-shadow: 0 4px 12px -2px rgba(28, 41, 81, 0.06) !important;
 }
 
-/* --- 4. Navbar Navigation Links (Home, 3D Studio, Contact) --- */
+/* --- 4. Navbar Navigation Links --- */
 [data-theme="light"] .ios-glass-nav-fluid nav a,
 [data-theme="light"] .ios-glass-nav-fluid nav button {
   background: transparent !important;
@@ -176,7 +175,7 @@
   padding: 0 !important;
 }
 
-/* Unselected nav links (Slate Gray with Dark Hover) */
+/* Unselected nav links */
 [data-theme="light"] .ios-glass-nav-fluid nav a,
 [data-theme="light"] .ios-glass-nav-fluid nav button:not(.font-bold) {
   color: #525875 !important;
@@ -189,13 +188,13 @@
   -webkit-text-fill-color: #111633 !important;
 }
 
-/* Selected active tab (Deep Navy Bold) */
+/* Selected active tab */
 [data-theme="light"] .ios-glass-nav-fluid nav button.font-bold {
   color: #111633 !important;
   -webkit-text-fill-color: #111633 !important;
 }
 
-/* --- 5. Action Links on Cards ("Explore 3D Studio →", "View Architecture →") --- */
+/* --- 5. Action Links on Cards --- */
 [data-theme="light"] .ios-glass-panel a:not([class*="rounded-full"]) {
   background: transparent !important;
   background-color: transparent !important;
@@ -211,8 +210,7 @@
   -webkit-text-fill-color: #4A5899 !important;
 }
 
-/* --- 6. Explicit Pill CTA Buttons (Primary & Secondary Actions) --- */
-/* Primary action button (e.g., "Launch 3D Studio", Nav "Connect", Footer "Send a Message") */
+/* --- 6. Explicit Pill CTA Buttons --- */
 [data-theme="light"] .ios-glass-nav-fluid > div > a[href="#contact"],
 [data-theme="light"] footer a[href^="mailto:"],
 [data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:first-of-type {
@@ -229,7 +227,7 @@
   -webkit-text-fill-color: #ffffff !important;
 }
 
-/* Secondary glass button (e.g., "Get In Touch" hero button) */
+/* Secondary glass button */
 [data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:not(:first-of-type) {
   background: rgba(255, 255, 255, 0.65) !important;
   color: #1C2951 !important;

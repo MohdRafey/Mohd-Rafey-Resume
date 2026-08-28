@@ -1,8 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import AmbientBackground from './components/AmbientBackground';
 import RefractionFilter from './components/RefractionFilter';
+import PillSelector from './components/PillSelector';
 import HomePage from './pages/HomePage';
 import Studio3DPage from './pages/Studio3DPage';
+import ResumePage from './pages/ResumePage';
+
+const themeOptions = [
+  {
+    id: 'shockwave',
+    label: 'Shockwave',
+    icon: '⚡',
+    activeClass: 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30 scale-100'
+  },
+  {
+    id: 'rain',
+    label: 'Rain',
+    icon: '🌧️',
+    activeClass: 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 scale-100'
+  },
+  {
+    id: 'embers',
+    label: 'Embers',
+    icon: '🔥',
+    activeClass: 'bg-gradient-to-r from-amber-500 to-red-600 text-white shadow-lg shadow-amber-500/30 scale-100'
+  },
+  {
+    id: 'light',
+    label: 'Light',
+    icon: '✨',
+    activeClass: 'bg-[#1C2951] text-white shadow-lg shadow-indigo-950/30 scale-100'
+  }
+];
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
@@ -12,7 +41,19 @@ export default function App() {
 
   const isLight = interactiveMode === 'light';
 
-  // Smooth mode change with dip-to-black veil
+  // Lock mobile devices to Light Mode
+  useEffect(() => {
+    const handleViewportChange = () => {
+      if (window.innerWidth < 768 && interactiveMode !== 'light') {
+        setInteractiveMode('light');
+      }
+    };
+
+    handleViewportChange();
+    window.addEventListener('resize', handleViewportChange);
+    return () => window.removeEventListener('resize', handleViewportChange);
+  }, [interactiveMode]);
+
   const handleModeChange = (newMode) => {
     if (newMode === interactiveMode || isTransitioning) return;
 
@@ -21,18 +62,10 @@ export default function App() {
     const isCrossingThemeBoundary = isCurrentLight !== isNextLight;
 
     if (isCrossingThemeBoundary) {
-      // 1. Cross-theme transition: Dip to black
       setIsTransitioning(true);
-
-      setTimeout(() => {
-        setInteractiveMode(newMode);
-      }, 250);
-
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 350);
+      setTimeout(() => setInteractiveMode(newMode), 250);
+      setTimeout(() => setIsTransitioning(false), 550);
     } else {
-      // 2. Dark-to-Dark transition (Shockwave <-> Rain <-> Embers): Instant switch
       setInteractiveMode(newMode);
     }
   };
@@ -41,7 +74,6 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', interactiveMode);
   }, [interactiveMode]);
 
-  // Smooth scroll interpolation
   useEffect(() => {
     let ticking = false;
     const MAX_SCROLL_DISTANCE = 140;
@@ -76,79 +108,32 @@ export default function App() {
   return (
     <div 
       data-theme={interactiveMode}
-      className={`min-h-screen w-full relative overflow-x-hidden selection:bg-brand-accent selection:text-white flex flex-col items-center transition-colors duration-500 ${
+      className={`min-h-screen w-full relative selection:bg-brand-accent selection:text-white flex flex-col items-center transition-colors duration-500 ${
         isLight ? 'text-[#111633]' : 'text-slate-100'
       }`}
     >
-      {/* Cinematic Dip-to-Black Veil */}
+      {/* Black Fade Veil */}
       <div 
         className={`fixed inset-0 z-[100] bg-[#07090e] pointer-events-none transition-opacity duration-300 ease-in-out ${
           isTransitioning ? 'opacity-100' : 'opacity-0'
         }`} 
       />
 
-      {/* 1. Global Refraction Displacement Shader */}
       <RefractionFilter />
-
-      {/* 2. Interactive Background Engine */}
       <AmbientBackground mode={interactiveMode} />
 
-      {/* 3. Floating Interactive Mode Switcher Pill */}
-      <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-1 p-1 rounded-full backdrop-blur-xl border shadow-2xl transition-all ${
-        isLight 
-          ? 'bg-white/80 border-black/10 shadow-indigo-950/10' 
-          : 'bg-slate-950/85 border-white/15 shadow-black/80'
-      }`}>
-        <button
-          onClick={() => handleModeChange('shockwave')}
-          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border-none ${
-            interactiveMode === 'shockwave'
-              ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30 scale-100'
-              : isLight ? 'bg-transparent text-[#525875] hover:text-[#111633]' : 'bg-transparent text-slate-400 hover:text-white'
-          }`}
-        >
-          <span>⚡</span>
-          <span>Shockwave</span>
-        </button>
-
-        <button
-          onClick={() => handleModeChange('rain')}
-          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border-none ${
-            interactiveMode === 'rain'
-              ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 scale-100'
-              : isLight ? 'bg-transparent text-[#525875] hover:text-[#111633]' : 'bg-transparent text-slate-400 hover:text-white'
-          }`}
-        >
-          <span>🌧️</span>
-          <span>Rain</span>
-        </button>
-
-        <button
-          onClick={() => handleModeChange('embers')}
-          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border-none ${
-            interactiveMode === 'embers'
-              ? 'bg-gradient-to-r from-amber-500 to-red-600 text-white shadow-lg shadow-amber-500/30 scale-100'
-              : isLight ? 'bg-transparent text-[#525875] hover:text-[#111633]' : 'bg-transparent text-slate-400 hover:text-white'
-          }`}
-        >
-          <span>🔥</span>
-          <span>Embers</span>
-        </button>
-
-        <button
-          onClick={() => handleModeChange('light')}
-          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border-none ${
-            interactiveMode === 'light'
-              ? 'bg-[#1C2951] text-white shadow-lg shadow-indigo-950/30 scale-100'
-              : isLight ? 'bg-transparent text-[#525875] hover:text-[#111633]' : 'bg-transparent text-slate-400 hover:text-white'
-          }`}
-        >
-          <span>✨</span>
-          <span>Light</span>
-        </button>
+      {/* Floating Theme Mode Switcher using PillSelector (Desktop Only) */}
+      <div className="fixed bottom-6 right-6 z-50 hidden md:block">
+        <PillSelector
+          items={themeOptions}
+          activeId={interactiveMode}
+          onChange={handleModeChange}
+          isLight={isLight}
+          className="shadow-2xl"
+        />
       </div>
 
-      {/* 4. FLUID CONTINUOUS EXPANDING NAVBAR */}
+      {/* Fluid Expanding Navbar */}
       <div 
         className="fixed top-0 left-0 right-0 z-50 w-full flex justify-center pointer-events-none"
         style={{
@@ -196,6 +181,7 @@ export default function App() {
               </div>
             </button>
 
+            {/* NAV LINKS */}
             <nav className="hidden sm:flex items-center gap-8 text-sm font-semibold">
               <button 
                 onClick={() => navigateTo('home')}
@@ -206,6 +192,17 @@ export default function App() {
                 }`}
               >
                 Home
+              </button>
+
+              <button 
+                onClick={() => navigateTo('resume')}
+                className={`transition-colors cursor-pointer bg-transparent border-none p-0 ${
+                  activePage === 'resume'
+                    ? (isLight ? 'text-[#111633] font-bold' : 'text-white font-bold')
+                    : (isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white')
+                }`}
+              >
+                Resume
               </button>
 
               <button 
@@ -240,19 +237,28 @@ export default function App() {
         </header>
       </div>
 
-      {/* Top Spacer */}
       <div className="h-28 w-full" />
 
-      {/* 5. Main Content Container */}
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 pb-28 flex flex-col items-center animate-page-enter">
-        {activePage === 'home' ? (
-          <HomePage onNavigate={navigateTo} />
-        ) : (
-          <Studio3DPage onNavigate={navigateTo} />
+      {/* Main Page Content Router */}
+      <main className="relative z-10 w-full flex flex-col items-center pb-24">
+        {activePage === 'home' && (
+          <div className="w-full max-w-5xl px-4 sm:px-6 py-6">
+            <HomePage onNavigate={navigateTo} />
+          </div>
+        )}
+        {activePage === 'resume' && (
+          <div className="w-full">
+            <ResumePage onNavigate={navigateTo} isLight={isLight} />
+          </div>
+        )}
+        {activePage === '3d-designs' && (
+          <div className="w-full max-w-5xl px-4 sm:px-6 py-6">
+            <Studio3DPage onNavigate={navigateTo} />
+          </div>
         )}
 
-        {/* PERSISTENT FOOTER */}
-        <footer id="contact" className="w-full mt-10">
+        {/* Persistent Footer */}
+        <footer id="contact" className="w-full max-w-5xl px-4 sm:px-6 mt-10">
           <div className="text-center p-8 sm:p-12 ios-glass-panel">
             <h2 className={`text-2xl sm:text-3xl font-black mb-2 ${
               isLight ? 'text-[#111633]' : 'text-white'
@@ -279,7 +285,7 @@ export default function App() {
             </div>
           </div>
         </footer>
-      </div>
+      </main>
 
     </div>
   );
