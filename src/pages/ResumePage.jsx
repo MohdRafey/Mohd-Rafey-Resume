@@ -309,14 +309,15 @@ interest in learning new technologies and programming languages.
           </div>
 
           {/* C. THEMED PILL SELECTOR */}
-          <div className="w-full flex justify-center mb-6 z-30">
-<PillSelector
-  items={filterOptions}
-  activeId={activeFilter}
-  onChange={(newId) => setActiveFilter(newId)}
-  isLight={isLight}
-/>
-          </div>
+<div className="w-full flex justify-center mb-6 z-30">
+  <PillSelector
+    items={filterOptions}
+    activeId={activeFilter}
+    onChange={(newId) => setActiveFilter(newId)}
+    isLight={isLight}
+    enableRandomDrops={true}
+  />
+</div>
 
           {/* D. HORIZONTAL TIMELINE COLUMNS */}
           <div 

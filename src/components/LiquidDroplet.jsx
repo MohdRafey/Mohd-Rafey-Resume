@@ -1,10 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 
 const MAX_RIPPLES = 16;
-const TAB_WIDTH = 116; // Static column width
-const DROPLET_WIDTH = 138; // Generous 14px horizontal overhang per side
-const DROPLET_HEIGHT = 52; // Generous 7px vertical overhang above & below
-const TRAY_PADDING = 4; // p-1 in Tailwind (4px)
 
 const VS_SOURCE = `
   attribute vec2 aPos;
@@ -73,25 +69,21 @@ function compileShader(gl, type, source) {
   return shader;
 }
 
-export default function PillSelector({
-  items = [],
-  activeId,
-  onChange,
-  isLight = false,
+export default function LiquidDroplet({
+  children,
+  isLight = true,
   enableRandomDrops = false,
-  className = ''
+  className = '',
+  style = {},
+  onClick,
+  ...props
 }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
-  
   const ripplesRef = useRef(new Float32Array(MAX_RIPPLES * 4).fill(0.0));
   const rippleIdxRef = useRef(0);
   const startTimeRef = useRef(performance.now());
   const lastRipplePosRef = useRef({ x: 0, y: 0, time: 0 });
-
-  // Calculate centered horizontal offset
-  const activeIndex = Math.max(0, items.findIndex((item) => item.id === activeId));
-  const dropletLeft = TRAY_PADDING + activeIndex * TAB_WIDTH - ((DROPLET_WIDTH - TAB_WIDTH) / 2);
 
   const addRipple = useCallback((x, y) => {
     const t = (performance.now() - startTimeRef.current) / 1000;
@@ -103,18 +95,35 @@ export default function PillSelector({
     rippleIdxRef.current = (idx + 1) % MAX_RIPPLES;
   }, []);
 
-  // WebGL Context Setup
+  // Sync canvas size safely
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current && canvasRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        if (rect.width > 10 && rect.height > 10) {
+          canvasRef.current.width = Math.round(rect.width);
+          canvasRef.current.height = Math.round(rect.height);
+        }
+      }
+    };
+
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  // WebGL Context
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !isLight) return;
 
-    canvas.width = DROPLET_WIDTH;
-    canvas.height = DROPLET_HEIGHT;
+    if (!canvas.width || canvas.width < 10) canvas.width = 240;
+    if (!canvas.height || canvas.height < 10) canvas.height = 60;
 
-    const gl = canvas.getContext('webgl', { 
-      alpha: true, 
-      antialias: true, 
-      premultipliedAlpha: false 
+    const gl = canvas.getContext('webgl', {
+      alpha: true,
+      antialias: true,
+      premultipliedAlpha: false
     });
     if (!gl) return;
 
@@ -174,7 +183,7 @@ export default function PillSelector({
     };
   }, [isLight]);
 
-  // Ambient Raindrops
+  // Ambient raindrops
   useEffect(() => {
     if (!isLight || !enableRandomDrops) return;
 
@@ -200,9 +209,8 @@ export default function PillSelector({
       isMounted = false;
       clearTimeout(timeoutId);
     };
-  }, [isLight, enableRandomDrops, addRipple, activeId]);
+  }, [isLight, enableRandomDrops, addRipple]);
 
-  // Hover wake
   const handlePointerMove = (e) => {
     if (!isLight) return;
     const canvas = canvasRef.current;
@@ -226,100 +234,48 @@ export default function PillSelector({
     }
   };
 
-  // Button Click Handler
-  const handleButtonClick = (item, e) => {
-    onChange(item.id);
-
-    const canvas = canvasRef.current;
-    if (canvas && isLight) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const clickRatioX = (e.clientX - rect.left) / rect.width;
-      const rx = canvas.width * Math.max(0.15, Math.min(0.85, isNaN(clickRatioX) ? 0.5 : clickRatioX));
-      const ry = canvas.height * 0.5;
-
-      addRipple(rx, ry);
+  const handleClick = (e) => {
+    if (isLight && canvasRef.current) {
+      const rect = canvasRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = canvasRef.current.height - (e.clientY - rect.top);
+      addRipple(x, y);
       setTimeout(() => {
-        addRipple(rx + (Math.random() * 12 - 6), ry + (Math.random() * 8 - 4));
+        addRipple(x + (Math.random() * 12 - 6), y + (Math.random() * 8 - 4));
       }, 80);
     }
+    if (onClick) onClick(e);
   };
 
   return (
     <div
       ref={containerRef}
       onPointerMove={handlePointerMove}
-      className={`ios-glass-panel relative inline-flex items-center p-1 rounded-full select-none transition-all duration-300 !overflow-visible z-20 ${className}`}
+      onClick={handleClick}
+      className={`relative overflow-hidden ${className}`}
+      style={{
+        background: isLight
+          ? 'rgba(255, 255, 255, 0.08)'
+          : 'linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)',
+        border: isLight
+          ? '1.5px solid rgba(255, 255, 255, 0.85)'
+          : '1px solid rgba(255, 255, 255, 0.16)',
+        boxShadow: isLight
+          ? '0 8px 24px -2px rgba(28, 41, 81, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(255, 255, 255, 0.4)'
+          : '0 10px 28px -4px rgba(0, 0, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.22)',
+        backdropFilter: 'blur(20px) saturate(160%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+        ...style
+      }}
+      {...props}
     >
-      {/* 1. EXPANDED PROTRUDING WATER DROPLET CAPSULE (54PX HEIGHT / 144PX WIDTH) */}
-      <div
-        className="absolute top-1/2 -translate-y-1/2 h-[54px] rounded-full pointer-events-none transition-all duration-400 ease-[cubic-bezier(0.34,1.45,0.64,1)] z-10 overflow-hidden"
-        style={{
-          left: `${dropletLeft}px`,
-          width: `${DROPLET_WIDTH}px`,
-          background: isLight
-            ? 'rgba(255, 255, 255, 0.12)'
-            : 'linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)',
-          border: isLight
-            ? '1.5px solid rgba(255, 255, 255, 0.95)'
-            : '1px solid rgba(255, 255, 255, 0.16)',
-          boxShadow: isLight
-            ? '0 12px 28px -2px rgba(17, 22, 51, 0.16), 0 3px 8px -1px rgba(17, 22, 51, 0.08), inset 0 1px 1.5px rgba(255, 255, 255, 1), inset 0 -1px 1px rgba(255, 255, 255, 0.5)'
-            : '0 10px 28px -4px rgba(0, 0, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.22)',
-          backdropFilter: 'blur(20px) saturate(160%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(160%)'
-        }}
-      >
-        {isLight && (
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full block pointer-events-none"
-          />
-        )}
-      </div>
-
-      {/* 2. PILL ITEM BUTTONS (32PX / H-8) */}
-      {items.map((item) => {
-        const isActive = activeId === item.id;
-
-        return (
-          <button
-            key={item.id}
-            onClick={(e) => handleButtonClick(item, e)}
-            type="button"
-            className="relative z-20 flex-shrink-0 w-[116px] h-8 flex items-center justify-center rounded-full cursor-pointer transition-all duration-300 outline-none select-none bg-transparent border-none p-0"
-          >
-            <div
-              className={`flex items-center justify-center gap-1.5 transform transition-transform duration-300 ease-out origin-center ${
-                isActive ? 'scale-115' : 'scale-100'
-              }`}
-            >
-              {item.icon && (
-                <span
-                  className={`text-xs inline-block transition-opacity duration-300 ${
-                    isActive ? 'opacity-100' : 'opacity-60 hover:opacity-90'
-                  }`}
-                >
-                  {item.icon}
-                </span>
-              )}
-
-              <span
-                className={`text-xs font-bold tracking-wider uppercase leading-none transition-colors duration-300 truncate max-w-[84px] text-center ${
-                  isActive
-                    ? isLight
-                      ? 'font-black text-[#111633]'
-                      : 'font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]'
-                    : isLight
-                      ? 'font-semibold text-[#525875] hover:text-[#111633]'
-                      : 'font-semibold text-slate-400 hover:text-white'
-                }`}
-              >
-                {item.label}
-              </span>
-            </div>
-          </button>
-        );
-      })}
+      {isLight && (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full block pointer-events-none"
+        />
+      )}
+      {children && <div className="relative z-10">{children}</div>}
     </div>
   );
 }
