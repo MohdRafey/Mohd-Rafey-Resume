@@ -273,8 +273,8 @@ export default function ResumePage({ onNavigate, isLight = false }) {
     <div className="w-full flex flex-col items-center">
       
       {/* 1. TOP SUMMARY CARD */}
-      <section className="w-full max-w-5xl px-4 sm:px-6 mb-6">
-        <div className="p-6 sm:p-8 ios-glass-panel text-center relative">
+<section className="w-full max-w-5xl px-4 sm:px-6 pt-4 sm:pt-6 mb-6">
+  <div className="p-6 sm:p-8 ios-glass-panel text-center relative">
           <div 
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3"
             style={{

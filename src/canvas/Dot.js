@@ -29,7 +29,7 @@ export class Dot {
     this.clockRadiusBoost = Math.max(this.clockRadiusBoost, radiusBoost);
   }
 
-  update(mouse, ripples, modeHandler, FRICTION) {
+update(mouse, ripples, modeHandler, FRICTION) {
     let totalForceX = 0;
     let totalForceY = 0;
     let targetRadius = this.baseRadius;
@@ -42,7 +42,7 @@ export class Dot {
       targetRadius = Math.max(targetRadius, this.baseRadius + (this.clockRadiusBoost || 0.8));
     }
 
-    // 2. Apply active mode physics (Shockwave mouse repulsion & amber ripple displacement)
+    // 2. Apply active mode physics
     if (modeHandler && typeof modeHandler.applyDotPhysics === 'function') {
       const result = modeHandler.applyDotPhysics(this, mouse, ripples);
       totalForceX += result.forceX || 0;
@@ -74,10 +74,8 @@ export class Dot {
     this.boltIntensity *= 0.965;
     this.emberIntensity *= 0.94;
 
-    // Reset clock state per frame so it gets cleanly re-evaluated on next draw cycle
-    this.isClockVertex = false;
-    this.clockAlpha = 0;
-    this.clockRadiusBoost = 0;
+    // NOTE: DO NOT reset this.isClockVertex here! 
+    // It will be reset at the start of the next frame before drawGridLines() runs.
   }
 
   draw(ctx, modeHandler) {

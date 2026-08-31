@@ -1,15 +1,15 @@
-// src/canvas/ShockwaveMode.js
+// Inside src/canvas/ShockwaveMode.js
 import { GridDigitalClock } from './GridDigitalClock';
 
 export class ShockwaveMode {
   constructor() {
-    this.MOUSE_RADIUS = 120;
-    this.FORCE_STRENGTH = 15;
-    this.clock = new GridDigitalClock({ digitSpacing: 2 });
+    this.MOUSE_RADIUS = 130;
+    this.FORCE_STRENGTH = 16;
+    this.clock = new GridDigitalClock({ digitGap: 1, rowGap: 1 });
   }
 
   update() {
-    // Mode update logic
+    // Mode lifecycle loop
   }
 
   handleClick(e, ripples, width, height) {
@@ -20,7 +20,7 @@ export class ShockwaveMode {
       currentRadius: 5,
       maxRadius: maxScreenDist,
       speed: 16,
-      waveWidth: 90,
+      waveWidth: 95,
       strength: 1.0,
       decay: 0.985
     });
@@ -33,7 +33,6 @@ export class ShockwaveMode {
     let alpha = 0.16;
     let rippleIntensity = 0;
 
-    // Mouse Magnetic Repulsion
     const dx = mouse.x - dot.x;
     const dy = mouse.y - dot.y;
     const distance = Math.hypot(dx, dy);
@@ -50,7 +49,6 @@ export class ShockwaveMode {
       targetRadius = Math.max(targetRadius, dot.baseRadius + ratio * 1.5);
     }
 
-    // Amber Shockwaves
     for (let i = 0; i < ripples.length; i++) {
       const rip = ripples[i];
       const rdx = dot.originX - rip.x;
@@ -74,25 +72,51 @@ export class ShockwaveMode {
     return { forceX, forceY, targetRadius, alpha, rippleIntensity };
   }
 
-  drawGridLines(ctx, dots2D, isLight) {
-    const navEl = document.querySelector('.undocked-nav-bar');
-    const navRect = navEl ? navEl.getBoundingClientRect() : null;
-    const maxCols = dots2D?.length || 80;
+drawGridLines(ctx, dots2D, ripples, isLight) {
+    // Skip entirely below 1440px
+    if (window.innerWidth < 1440) {
+      this.clock.draw(ctx, dots2D, ripples, isLight);
+      return;
+    }
 
-    this.clock.alignToNav(navRect, 20, maxCols);
-    this.clock.draw(ctx, dots2D, isLight);
+    const introEl = 
+      document.querySelector('.intro-glass-panel') ||
+      document.querySelector('#intro-panel') ||
+      document.querySelector('.hero-card') ||
+      document.querySelector('.ios-glass-panel');
+
+    const panelRect = introEl ? introEl.getBoundingClientRect() : null;
+    const maxCols = dots2D?.length || 80;
+    const maxRows = dots2D?.[0]?.length || 50;
+
+    this.clock.alignToPanel(panelRect, 24, maxCols, maxRows);
+    this.clock.draw(ctx, dots2D, ripples, isLight);
   }
 
-  drawDot(ctx, dot) {
+  drawDot(ctx, dot, isLight = false) {
     ctx.beginPath();
     ctx.arc(dot.x, dot.y, dot.currentRadius, 0, Math.PI * 2);
 
-    if (dot.rippleIntensity > 0.08) {
-      ctx.fillStyle = `rgba(251, 191, 36, ${dot.alpha})`;
-    } else if (dot.alpha > 0.24) {
-      ctx.fillStyle = `rgba(165, 180, 252, ${dot.alpha})`;
+    if (isLight) {
+      if (dot.isClockVertex) {
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.9)';
+      } else if (dot.rippleIntensity > 0.08) {
+        ctx.fillStyle = `rgba(79, 70, 229, ${dot.alpha})`;
+      } else if (dot.alpha > 0.24) {
+        ctx.fillStyle = `rgba(99, 102, 241, ${dot.alpha})`;
+      } else {
+        ctx.fillStyle = `rgba(148, 163, 184, ${dot.alpha})`;
+      }
     } else {
-      ctx.fillStyle = `rgba(226, 232, 240, ${dot.alpha})`;
+      if (dot.isClockVertex) {
+        ctx.fillStyle = 'rgba(248, 250, 252, 0.95)';
+      } else if (dot.rippleIntensity > 0.08) {
+        ctx.fillStyle = `rgba(245, 158, 11, ${dot.alpha})`;
+      } else if (dot.alpha > 0.24) {
+        ctx.fillStyle = `rgba(165, 180, 252, ${dot.alpha})`;
+      } else {
+        ctx.fillStyle = `rgba(226, 232, 240, ${dot.alpha})`;
+      }
     }
 
     ctx.fill();
