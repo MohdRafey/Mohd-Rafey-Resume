@@ -1,4 +1,6 @@
+// src/pages/HomePage.jsx
 import React from 'react';
+import LiquidDropletButton from '../components/LiquidDropletButton';
 
 const areasOfExploration = [
   {
@@ -64,23 +66,22 @@ const areasOfExploration = [
 export default function HomePage({ onNavigate }) {
   return (
     <div className="w-full flex flex-col items-center animate-fadeIn">
-
-{/* MOBILE-ONLY EXPERIENCE NOTICE */}
-<div className="w-full block md:hidden -mt-4 mb-4">
-  <div className="ios-glass-panel py-3 px-4 flex items-center gap-3.5 !rounded-2xl border border-white/40 shadow-sm">
-    <div className="w-9 h-9 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-base">
-      🖥️
-    </div>
-    <div className="text-left">
-      <p className="text-xs font-bold leading-tight mb-0.5 text-[#111633] dark:text-white">
-        Interactive Desktop Experience
-      </p>
-      <p className="text-[11px] leading-snug text-[#525875] dark:text-slate-300">
-        This site features interactive canvas shaders and 3D scenes best experienced on a desktop screen.
-      </p>
-    </div>
-  </div>
-</div>
+      {/* MOBILE-ONLY EXPERIENCE NOTICE */}
+      <div className="w-full block md:hidden -mt-4 mb-4">
+        <div className="ios-glass-panel py-3 px-4 flex items-center gap-3.5 !rounded-2xl border border-white/40 shadow-sm">
+          <div className="w-9 h-9 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-base">
+            🖥️
+          </div>
+          <div className="text-left">
+            <p className="text-xs font-bold leading-tight mb-0.5 text-[#111633] dark:text-white">
+              Interactive Desktop Experience
+            </p>
+            <p className="text-[11px] leading-snug text-[#525875] dark:text-slate-300">
+              This site features interactive canvas shaders and 3D scenes best experienced on a desktop screen.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* HERO CARD */}
       <section className="w-full mb-14">
@@ -108,19 +109,24 @@ export default function HomePage({ onNavigate }) {
             Senior Engineer at <span className="text-white font-semibold">SMS Group India Pvt. Ltd.</span> architecting high-reliability industrial automation software for steelmaker giants including JSW and AM/NS. With a Major in Cloud Computing, I build mission-critical shift systems, real-time telemetry dashboards, and spatial 3D architectural environments.
           </p>
 
-          <div className="flex justify-center gap-4 flex-wrap">
-            {/* LAUNCH RESUME ACTION */}
-            <button 
-              onClick={() => onNavigate('resume')}
-              className="px-8 py-3.5 rounded-full text-white font-bold text-sm shadow-xl hover:scale-105 transition-all cursor-pointer border-none flex items-center gap-2"
-              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 0 24px var(--accent-glow)' }}
-            >
-              <span>Launch Resume</span>
-              <span>→</span>
-            </button>
+          {/* ACTION BUTTONS */}
+          <div className="flex justify-center items-center gap-4 flex-wrap">
+            {/* LAUNCH RESUME (WITH LIQUID RIPPLES) */}
+<LiquidDropletButton
+    enableRandomDrops={true}
+    onClick={() => onNavigate('resume')}
+    className="hover:scale-105"
+  >
+    <div className="px-8 py-3.5 text-sm font-bold flex items-center gap-2">
+      <span>Launch Resume</span>
+      <span>→</span>
+    </div>
+  </LiquidDropletButton>
+
+            {/* GET IN TOUCH */}
             <a 
               href="#contact" 
-              className="px-8 py-3.5 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-bold text-sm border border-white/10 shadow-sm hover:shadow-md transition-all"
+              className="px-8 py-3.5 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-bold text-sm border border-white/10 shadow-sm hover:shadow-md transition-all no-underline"
             >
               Get In Touch
             </a>
@@ -193,7 +199,7 @@ export default function HomePage({ onNavigate }) {
                 ) : (
                   <a 
                     href="#contact" 
-                    className="text-xs font-bold text-slate-200 hover:text-white flex items-center gap-1"
+                    className="text-xs font-bold text-slate-200 hover:text-white flex items-center gap-1 no-underline"
                   >
                     {item.linkText}
                   </a>

@@ -1,7 +1,9 @@
+// src/App.jsx
 import React, { useState, useEffect } from 'react';
 import AmbientBackground from './components/AmbientBackground';
 import RefractionFilter from './components/RefractionFilter';
 import PillSelector from './components/PillSelector';
+import LiquidDropletButton from './components/LiquidDropletButton';
 import HomePage from './pages/HomePage';
 import Studio3DPage from './pages/Studio3DPage';
 import ResumePage from './pages/ResumePage';
@@ -9,21 +11,9 @@ import ResumePage from './pages/ResumePage';
 const themeOptions = [
   {
     id: 'shockwave',
-    label: 'Shockwave',
-    icon: '⚡',
+    label: 'Dark',
+    icon: '🌙',
     activeClass: 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30 scale-100'
-  },
-  {
-    id: 'rain',
-    label: 'Rain',
-    icon: '🌧️',
-    activeClass: 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 scale-100'
-  },
-  {
-    id: 'embers',
-    label: 'Embers',
-    icon: '🔥',
-    activeClass: 'bg-gradient-to-r from-amber-500 to-red-600 text-white shadow-lg shadow-amber-500/30 scale-100'
   },
   {
     id: 'light',
@@ -35,7 +25,7 @@ const themeOptions = [
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
-  const [interactiveMode, setInteractiveMode] = useState('light');
+  const [interactiveMode, setInteractiveMode] = useState('shockwave');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -122,7 +112,7 @@ export default function App() {
       <RefractionFilter />
       <AmbientBackground mode={interactiveMode} />
 
-      {/* Floating Theme Mode Switcher using PillSelector (Desktop Only) */}
+      {/* Floating Theme Switcher */}
       <div className="fixed bottom-6 right-6 z-50 hidden md:block">
         <PillSelector
           items={themeOptions}
@@ -226,20 +216,26 @@ export default function App() {
               </a>
             </nav>
 
-            <a 
-              href="#contact" 
-              className="text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-lg hover:scale-105 transition-all"
-              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 0 20px var(--accent-glow)' }}
+            {/* CONNECT DROPLET BUTTON (ENLARGED TO MATCH LAUNCH RESUME) */}
+            <LiquidDropletButton
+              enableRandomDrops={false}
+              onClick={() => {
+                const contactEl = document.getElementById('contact');
+                if (contactEl) contactEl.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="hover:scale-105"
             >
-              Connect
-            </a>
+              <div className="px-6 py-2.5 text-xs sm:text-sm font-bold flex items-center gap-1.5 tracking-normal">
+                <span>Connect</span>
+              </div>
+            </LiquidDropletButton>
           </div>
         </header>
       </div>
 
       <div className="h-24 w-full" />
 
-      {/* Main Page Content Router */}
+      {/* Main Content Router */}
       <main className="relative z-10 w-full flex flex-col items-center pb-24">
         {activePage === 'home' && (
           <div className="w-full max-w-5xl px-4 sm:px-6 py-6">
@@ -257,7 +253,7 @@ export default function App() {
           </div>
         )}
 
-        {/* Persistent Footer */}
+        {/* Footer */}
         <footer id="contact" className="w-full max-w-5xl px-4 sm:px-6 mt-10">
           <div className="text-center p-8 sm:p-12 ios-glass-panel">
             <h2 className={`text-2xl sm:text-3xl font-black mb-2 ${
@@ -286,7 +282,6 @@ export default function App() {
           </div>
         </footer>
       </main>
-
     </div>
   );
 }

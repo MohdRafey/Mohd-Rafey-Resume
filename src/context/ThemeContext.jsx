@@ -76,6 +76,15 @@ function Scene() {
   );
 }
 
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    // Fallback if rendered outside the provider
+    return { isLight: false, theme: 'dark', interactiveMode: 'shockwave' };
+  }
+  return context;
+};
+
 export default function RefractiveCard3D({ children, className = "" }) {
   return (
     <div className={`relative group rounded-[32px] overflow-hidden ${className}`}>

@@ -118,8 +118,8 @@
 }
 
 /* Inner Card Tag Pills */
-[data-theme="light"] .ios-glass-panel span[class*="rounded-full"]:not(.category-dot):not(.category-spine-dot),
-[data-theme="light"] .ios-glass-panel div[class*="rounded-full"]:not(a):not(button):not(.category-dot):not(.category-spine-dot) {
+[data-theme="light"] .ios-glass-panel span[class*="rounded-full"]:not(.category-dot):not(.category-spine-dot):not(.liquid-droplet-isolated-btn *),
+[data-theme="light"] .ios-glass-panel div[class*="rounded-full"]:not(a):not(button):not(.category-dot):not(.category-spine-dot):not(.liquid-droplet-isolated-btn) {
   background-color: rgba(28, 41, 81, 0.05) !important;
   color: #4A5899 !important;
   -webkit-text-fill-color: #4A5899 !important;
@@ -164,7 +164,7 @@
 }
 
 /* --- 5. Action Links on Cards --- */
-[data-theme="light"] .ios-glass-panel a:not([class*="rounded-full"]) {
+[data-theme="light"] .ios-glass-panel a:not([class*="rounded-full"]):not(.liquid-droplet-isolated-btn *) {
   background: transparent !important;
   background-color: transparent !important;
   box-shadow: none !important;
@@ -173,34 +173,53 @@
   text-decoration: none !important;
 }
 
-[data-theme="light"] .ios-glass-panel a:not([class*="rounded-full"]):hover,
-[data-theme="light"] .ios-glass-panel a:not([class*="rounded-full"]):hover * {
+[data-theme="light"] .ios-glass-panel a:not([class*="rounded-full"]):not(.liquid-droplet-isolated-btn *):hover,
+[data-theme="light"] .ios-glass-panel a:not([class*="rounded-full"]):not(.liquid-droplet-isolated-btn *):hover * {
   color: #4A5899 !important;
   -webkit-text-fill-color: #4A5899 !important;
 }
 
 /* --- 6. Explicit Pill CTA Buttons --- */
-[data-theme="light"] .ios-glass-nav-fluid > div > a[href="#contact"],
+
+/* Standard Static Fallback Buttons (Excluding Liquid Droplet Buttons) */
 [data-theme="light"] footer a[href^="mailto:"],
-[data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:first-of-type {
+[data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:first-of-type:not(.liquid-droplet-isolated-btn):not(.liquid-droplet-isolated-btn *) {
   background-color: #1C2951 !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
   box-shadow: 0 8px 20px -4px rgba(28, 41, 81, 0.25) !important;
 }
 
-[data-theme="light"] .ios-glass-nav-fluid > div > a[href="#contact"] *,
 [data-theme="light"] footer a[href^="mailto:"] *,
-[data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:first-of-type * {
+[data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:first-of-type:not(.liquid-droplet-isolated-btn):not(.liquid-droplet-isolated-btn *) * {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
 }
 
-/* Secondary glass button */
-[data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:not(:first-of-type) {
+/* Secondary glass button (e.g. Get In Touch) */
+[data-theme="light"] .ios-glass-panel a[class*="rounded-full"]:not(:first-of-type):not(.liquid-droplet-isolated-btn):not(.liquid-droplet-isolated-btn *) {
   background: rgba(255, 255, 255, 0.55) !important;
   color: #1C2951 !important;
   -webkit-text-fill-color: #1C2951 !important;
   border: 1px solid rgba(28, 41, 81, 0.15) !important;
   box-shadow: 0 6px 16px -4px rgba(28, 41, 81, 0.05) !important;
+}
+
+/* --- 7. Liquid Droplet WebGL Buttons (Light Mode Protection) --- */
+[data-theme="light"] .liquid-droplet-isolated-btn {
+  background: rgba(255, 255, 255, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 
+    0 12px 28px -2px rgba(17, 22, 51, 0.16), 
+    0 3px 8px -1px rgba(17, 22, 51, 0.08), 
+    inset 0 1px 1.5px rgba(255, 255, 255, 1), 
+    inset 0 -1px 1px rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(20px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+}
+
+[data-theme="light"] .liquid-droplet-isolated-btn * {
+  color: #111633 !important;
+  -webkit-text-fill-color: #111633 !important;
 }
