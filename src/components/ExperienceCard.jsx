@@ -1,12 +1,11 @@
 import React from 'react';
 
-// Solid, flat category dot colors
 const TAG_DOT_COLORS = {
-  Academics: '#10b981',    // Emerald Green
-  Career: '#6366f1',       // Indigo
-  Hobby: '#f59e0b',        // Amber
-  Certification: '#06b6d4',// Cyan
-  Research: '#a855f7'      // Purple
+  Academics: '#10b981',
+  Career: '#6366f1',
+  Hobby: '#f59e0b',
+  Certification: '#06b6d4',
+  Research: '#a855f7'
 };
 
 const DEFAULT_DOT_COLOR = 'var(--accent-primary)';
@@ -25,79 +24,71 @@ export default function ExperienceCard({
   const dotColor = TAG_DOT_COLORS[tag] || DEFAULT_DOT_COLOR;
 
   return (
-    <div 
-      className="ios-glass-panel p-4 w-full relative transition-colors duration-200 group rounded-2xl"
-      style={{
-        isolation: 'isolate',
-        WebkitBackfaceVisibility: 'hidden',
-        backfaceVisibility: 'hidden',
-        transform: 'translateZ(0)'
-      }}
-    >
+    <div className="ios-glass-panel px-4 py-3 w-full relative">
       
       {/* 1. Left Vertical Spine Node */}
       <div 
-        className="category-spine-dot absolute -left-[27px] top-5 w-2.5 h-2.5 rounded-full border border-white/80"
+        className="category-spine-dot absolute -left-[27px] top-3.5 w-2.5 h-2.5 rounded-full border border-white/80 z-20 shrink-0"
         style={{ 
           backgroundColor: dotColor,
           background: dotColor
         }}
       />
 
-      {/* 2. Top Header: Category Pill with Increased Thickness & Flat Dot */}
-      <div className="flex items-center justify-between gap-2 mb-3">
+      {/* 2. Top Bar: Tag Pill & Date */}
+      <div className="flex items-center justify-between gap-2 mb-1.5 relative z-10">
         {tag && (
-          <div className="category-pill inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full select-none backdrop-blur-md bg-white/[0.07] border border-white/20 shadow-xs">
-            {/* Plain Colored Dot */}
+          <div className="category-pill inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full select-none bg-white/[0.06] border border-white/15">
             <span 
-              className="category-dot w-2 h-2 rounded-full shrink-0" 
+              className="category-dot w-1.5 h-1.5 rounded-full shrink-0" 
               style={{ 
                 backgroundColor: dotColor,
                 background: dotColor
               }}
             />
-            <span className="text-[11px] font-bold tracking-wider uppercase opacity-95 leading-none">
+            <span className="text-[9px] font-bold tracking-wider uppercase opacity-95 leading-none">
               {tag}
             </span>
           </div>
         )}
 
         {date && (
-          <span className="text-[11px] font-bold opacity-60 uppercase tracking-wide">
+          <span className="text-[9px] font-bold opacity-60 uppercase tracking-wide">
             {date}
           </span>
         )}
       </div>
 
-      {/* 3. Title */}
-      {title && (
-        <h3 className="text-sm sm:text-[15px] font-black leading-snug mb-1">
-          {title}
-        </h3>
-      )}
+      {/* 3. Title & Organization in Compact Header Block */}
+      <div className="mb-1.5 relative z-10">
+        {title && (
+          <h3 className="text-xs sm:text-[13px] font-black leading-snug tracking-tight">
+            {title}
+          </h3>
+        )}
 
-      {/* 4. Organization / Subtitle */}
-      {org && (
-        <h4 className="text-[11px] font-bold text-[var(--accent-light)] mb-2 opacity-90">
-          {org}
-        </h4>
-      )}
+        {org && (
+          <h4 className="text-[10px] font-bold text-[var(--accent-light)] opacity-90 leading-tight mt-0.5">
+            {org}
+          </h4>
+        )}
+      </div>
 
-      {/* 5. Detail Description */}
+      {/* 4. Compact Body Detail */}
       {detail && (
-        <p className="text-[11px] opacity-80 leading-relaxed font-normal mb-3">
+        <p className="text-[10.5px] opacity-80 leading-relaxed font-normal mb-2 relative z-10">
           {detail}
         </p>
       )}
 
-      {/* 6. Footer: Metrics or Paper Link */}
+      {/* 5. Footer: Metric / Link */}
       {(metric || link) && (
-        <div className="pt-2.5 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-[11px]">
+        <div className="pt-1.5 border-t border-white/10 flex items-center justify-between text-[10px] relative z-10">
           {metric ? (
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-xs font-black">{metric}</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-[11px] font-black">{metric}</span>
               {metricLabel && (
-                <span className="text-[9px] uppercase font-bold opacity-60">
+                <span className="text-[8px] uppercase font-bold opacity-60">
                   {metricLabel}
                 </span>
               )}
@@ -111,7 +102,7 @@ export default function ExperienceCard({
               href={link}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[11px] font-bold text-[var(--accent-primary)] hover:underline flex items-center gap-1"
+              className="text-[10px] font-bold text-[var(--accent-primary)] hover:underline flex items-center gap-1"
             >
               {linkText || 'Read Paper (PDF) →'}
             </a>

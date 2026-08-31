@@ -1,11 +1,15 @@
+// src/canvas/ShockwaveMode.js
+import { GridDigitalClock } from './GridDigitalClock';
+
 export class ShockwaveMode {
   constructor() {
     this.MOUSE_RADIUS = 120;
     this.FORCE_STRENGTH = 15;
+    this.clock = new GridDigitalClock({ digitSpacing: 2 });
   }
 
   update() {
-    // Shockwave mode relies on mouse and ripple events
+    // Mode update logic
   }
 
   handleClick(e, ripples, width, height) {
@@ -29,7 +33,7 @@ export class ShockwaveMode {
     let alpha = 0.16;
     let rippleIntensity = 0;
 
-    // 1. Mouse Magnetic Repulsion
+    // Mouse Magnetic Repulsion
     const dx = mouse.x - dot.x;
     const dy = mouse.y - dot.y;
     const distance = Math.hypot(dx, dy);
@@ -46,7 +50,7 @@ export class ShockwaveMode {
       targetRadius = Math.max(targetRadius, dot.baseRadius + ratio * 1.5);
     }
 
-    // 2. Amber Shockwaves
+    // Amber Shockwaves
     for (let i = 0; i < ripples.length; i++) {
       const rip = ripples[i];
       const rdx = dot.originX - rip.x;
@@ -68,6 +72,15 @@ export class ShockwaveMode {
     }
 
     return { forceX, forceY, targetRadius, alpha, rippleIntensity };
+  }
+
+  drawGridLines(ctx, dots2D, isLight) {
+    const navEl = document.querySelector('.undocked-nav-bar');
+    const navRect = navEl ? navEl.getBoundingClientRect() : null;
+    const maxCols = dots2D?.length || 80;
+
+    this.clock.alignToNav(navRect, 20, maxCols);
+    this.clock.draw(ctx, dots2D, isLight);
   }
 
   drawDot(ctx, dot) {

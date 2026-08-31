@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "./styles/themes.css";
+@import "./styles/glass-dark.css";
+@import "./styles/glass-light.css";
 
 /* 1. Base Setup */
 html, body {
@@ -7,9 +10,33 @@ html, body {
   background-color: #07090e;
   color: #f8fafc;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  overflow-x: clip; /* 'clip' preserves position: sticky whereas 'hidden' breaks it */
+  overflow-x: clip;
+  min-height: 100vh;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-/* 2. Modular Sub-systems */
-@import "./styles/themes.css";
-@import "./styles/glass.css";
-@import "./styles/light-mode.css";
+
+/* Light Mode Background Reset */
+[data-theme="light"],
+[data-theme="light"] body {
+  background-color: #f4f6fb;
+  color: #111633;
+}
+
+/* 2. Keyframes & Animation Classes */
+@keyframes slideFadeRightToLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(36px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-timeline-enter {
+  animation: slideFadeRightToLeft 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}

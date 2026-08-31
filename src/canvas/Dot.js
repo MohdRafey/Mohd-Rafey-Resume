@@ -15,6 +15,18 @@ export class Dot {
     this.rainIntensity = 0;
     this.boltIntensity = 0;
     this.emberIntensity = 0;
+    
+    // Clock-specific attributes
+    this.isClockVertex = false;
+    this.clockAlpha = 0;
+    this.clockRadiusBoost = 0;
+  }
+
+  // Method called by GridDigitalClock to illuminate this vertex
+  setClockVertex(alpha = 0.9, radiusBoost = 0.8) {
+    this.isClockVertex = true;
+    this.clockAlpha = Math.max(this.clockAlpha, alpha);
+    this.clockRadiusBoost = Math.max(this.clockRadiusBoost, radiusBoost);
   }
 
   update(mouse, ripples, modeHandler, FRICTION) {
@@ -24,7 +36,13 @@ export class Dot {
     let highestAlpha = 0.16;
     let highestRippleIntensity = 0;
 
-    // Apply active mode physics (Shockwave calculates mouse/ripples; Rain/Embers return 0 forces)
+    // 1. Boost baseline alpha and radius if flagged as an active clock dot
+    if (this.isClockVertex) {
+      highestAlpha = Math.max(highestAlpha, this.clockAlpha || 0.85);
+      targetRadius = Math.max(targetRadius, this.baseRadius + (this.clockRadiusBoost || 0.8));
+    }
+
+    // 2. Apply active mode physics (Shockwave mouse repulsion & amber ripple displacement)
     if (modeHandler && typeof modeHandler.applyDotPhysics === 'function') {
       const result = modeHandler.applyDotPhysics(this, mouse, ripples);
       totalForceX += result.forceX || 0;
@@ -34,7 +52,7 @@ export class Dot {
       highestRippleIntensity = Math.max(highestRippleIntensity, result.rippleIntensity || 0);
     }
 
-    // Spring Physics
+    // 3. Spring Physics
     const targetX = this.originX + totalForceX;
     const targetY = this.originY + totalForceY;
 
@@ -46,14 +64,20 @@ export class Dot {
     this.x += this.vx;
     this.y += this.vy;
 
+    // 4. Smooth property interpolation
     this.alpha += (highestAlpha - this.alpha) * 0.14;
     this.currentRadius += (targetRadius - this.currentRadius) * 0.14;
     this.rippleIntensity += (highestRippleIntensity - this.rippleIntensity) * 0.16;
 
-    // Decay intensities
+    // 5. Decay intensities
     this.rainIntensity *= 0.76;
     this.boltIntensity *= 0.965;
     this.emberIntensity *= 0.94;
+
+    // Reset clock state per frame so it gets cleanly re-evaluated on next draw cycle
+    this.isClockVertex = false;
+    this.clockAlpha = 0;
+    this.clockRadiusBoost = 0;
   }
 
   draw(ctx, modeHandler) {

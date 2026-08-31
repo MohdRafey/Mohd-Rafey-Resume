@@ -232,9 +232,32 @@ export default function ResumePage({ onNavigate, isLight = false }) {
           setScrollProgress(currentProgress);
 
           const maxTranslateX = Math.max(0, trackRef.current.scrollWidth - window.innerWidth);
-          const translateX = currentProgress * maxTranslateX;
+          const shiftLeft = Math.round(currentProgress * maxTranslateX);
 
-          trackRef.current.style.transform = `translate3d(-${translateX}px, 0, 0)`;
+          trackRef.current.style.left = `-${shiftLeft}px`;
+
+          // Column edge opacity fade
+          const columns = trackRef.current.children;
+          const viewportWidth = window.innerWidth;
+          const fadeZone = 80;
+
+          for (let i = 0; i < columns.length; i++) {
+            const col = columns[i];
+            const colRect = col.getBoundingClientRect();
+
+            const distLeft = colRect.right;
+            const distRight = viewportWidth - colRect.left;
+
+            let opacity = 1;
+            if (distLeft < fadeZone) {
+              opacity = Math.max(0, distLeft / fadeZone);
+            } else if (distRight < fadeZone) {
+              opacity = Math.max(0, distRight / fadeZone);
+            }
+
+            col.style.opacity = opacity.toFixed(2);
+          }
+
           ticking = false;
         });
         ticking = true;
@@ -249,11 +272,11 @@ export default function ResumePage({ onNavigate, isLight = false }) {
   return (
     <div className="w-full flex flex-col items-center">
       
-      {/* 1. TOP INTRO HEADER */}
+      {/* 1. TOP SUMMARY CARD */}
       <section className="w-full max-w-5xl px-4 sm:px-6 mb-6">
-        <div className="p-6 sm:p-8 ios-glass-panel text-center relative overflow-hidden">
+        <div className="p-6 sm:p-8 ios-glass-panel text-center relative">
           <div 
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3 shadow-xs backdrop-blur-md"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3"
             style={{
               backgroundColor: 'rgba(255, 255, 255, 0.05)',
               border: '1px solid var(--accent-border-fringe)',
@@ -268,11 +291,7 @@ export default function ResumePage({ onNavigate, isLight = false }) {
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed">
-            Senior Software Engineer currently working in SMS Group India. My Work
-involves building robust and modular Interfaces and resilient code logic that are
-used in Critical Operations. I have experience in Software Development using
-multiple technological tools, Client Handling, Site Commissioning. I have keen
-interest in learning new technologies and programming languages.
+            Senior Software Engineer currently working in SMS Group India. My work involves building robust, modular interfaces and resilient code logic used in critical operations. I have extensive experience in software development across the .NET and cloud ecosystems, client handling, and on-site commissioning.
           </p>
         </div>
       </section>
@@ -283,13 +302,12 @@ interest in learning new technologies and programming languages.
         style={{ height: `calc(${scrollDistance}px + 100vh)` }}
         className="w-full relative"
       >
-        {/* Added extra top padding (pt-24 sm:pt-28) to comfortably clear the fixed navbar */}
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-start pt-20 sm:pt-20">
+        <div className="sticky top-0 h-screen w-full flex flex-col justify-start pt-20 sm:pt-20 overflow-x-clip">
           
           {/* A. STICKY TIMELINE BADGE */}
           <div className="w-full flex justify-center mb-3 z-30">
             <span 
-              className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase backdrop-blur-md shadow-xs"
+              className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase"
               style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 border: '1px solid var(--accent-border-fringe)',
@@ -300,75 +318,95 @@ interest in learning new technologies and programming languages.
             </span>
           </div>
 
-          {/* B. EDGE-TO-EDGE PROGRESS LINE */}
-          <div className="w-full h-[2px] bg-white/10 relative z-10 mb-4">
-            <div 
-              className="h-full bg-gradient-to-r from-[var(--accent-primary)] via-[var(--accent-light)] to-[var(--accent-primary)] transition-all duration-75"
-              style={{ width: `${Math.round(scrollProgress * 100)}%` }}
-            />
-          </div>
-
-          {/* C. THEMED PILL SELECTOR */}
-<div className="w-full flex justify-center mb-6 z-30">
-  <PillSelector
-    items={filterOptions}
-    activeId={activeFilter}
-    onChange={(newId) => setActiveFilter(newId)}
-    isLight={isLight}
-    enableRandomDrops={true}
+{/* B. THEME-AWARE EDGE-TO-EDGE PROGRESS LINE */}
+<div 
+  className="w-full h-[3px] relative z-20 mb-5 shrink-0"
+  style={{
+    backgroundColor: 'var(--accent-border-fringe, rgba(255, 255, 255, 0.12))'
+  }}
+>
+  <div 
+    className="h-full transition-all duration-75 ease-out"
+    style={{ 
+      width: `${Math.max(2, Math.round(scrollProgress * 100))}%`,
+      background: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-primary) 100%)',
+      boxShadow: '0 0 10px var(--accent-glow, rgba(99, 102, 241, 0.5))'
+    }}
   />
 </div>
 
-          {/* D. HORIZONTAL TIMELINE COLUMNS */}
-          <div 
-            ref={trackRef}
-            className="flex items-start gap-20 sm:gap-28 px-[50vw] w-max relative z-10 will-change-transform"
-          >
-            {filteredMilestones.map((col, yIdx) => (
-              <div 
-                key={yIdx}
-                className="shrink-0 w-[340px] sm:w-[420px] flex flex-col relative"
-              >
-                {/* Year Header */}
-                <div className="flex items-center gap-3 mb-3 relative">
-                  <div 
-                    className="w-3.5 h-3.5 rounded-full border-2 border-white shadow-md z-10 shrink-0"
-                    style={{ backgroundColor: 'var(--accent-primary)' }}
-                  />
-                  
-                  <span className="text-2xl sm:text-3xl font-black text-[var(--accent-primary)] tracking-tight">
-                    {col.year}
-                  </span>
-
-                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/10 border border-white/15 uppercase text-slate-400">
-                    {col.events.length} {col.events.length > 1 ? 'Events' : 'Event'}
-                  </span>
-                </div>
-
-                {/* Vertical Column Spine */}
-                <div className="relative pl-5 border-l-2 border-white/15 space-y-3 pb-2 ml-1.5">
-                  {col.events.map((item, eIdx) => (
-                    <ExperienceCard
-                      key={eIdx}
-                      tag={item.tag}
-                      date={item.date}
-                      title={item.title}
-                      org={item.org}
-                      detail={item.detail}
-                      metric={item.metric}
-                      metricLabel={item.metricLabel}
-                      link={item.link}
-                      linkText={item.linkText}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
+          {/* C. THEMED PILL SELECTOR */}
+          <div className="w-full flex justify-center mb-6 z-30">
+            <PillSelector
+              items={filterOptions}
+              activeId={activeFilter}
+              onChange={(newId) => setActiveFilter(newId)}
+              isLight={isLight}
+              enableRandomDrops={true}
+            />
           </div>
+
+          {/* D. HORIZONTAL TRACK CONTAINER */}
+          <div className="w-full relative">
+            <div 
+              ref={trackRef}
+              style={{ 
+                left: '0px',
+                willChange: 'left'
+              }}
+              className="flex items-start gap-20 sm:gap-28 px-[50vw] w-max relative z-10"
+            >
+              {filteredMilestones.map((col, yIdx) => (
+                <div 
+                  key={col.year || yIdx}
+                  style={{ 
+                    contain: 'paint layout',
+                    willChange: 'opacity'
+                  }}
+                  className="shrink-0 w-[340px] sm:w-[420px] flex flex-col relative"
+                >
+                  {/* Year Header */}
+                  <div className="flex items-center gap-3 mb-3 relative">
+                    <div 
+                      className="w-3.5 h-3.5 rounded-full border-2 border-white shadow-md z-10 shrink-0"
+                      style={{ backgroundColor: 'var(--accent-primary)' }}
+                    />
+                    
+                    <span className="text-2xl sm:text-3xl font-black text-[var(--accent-primary)] tracking-tight">
+                      {col.year}
+                    </span>
+
+                    <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/10 border border-white/15 uppercase text-slate-400">
+                      {col.events.length} {col.events.length > 1 ? 'Events' : 'Event'}
+                    </span>
+                  </div>
+
+                  {/* Vertical Column Spine */}
+                  <div className="relative pl-5 border-l-2 border-white/15 space-y-3 pb-2 ml-1.5">
+                    {col.events.map((item, eIdx) => (
+                      <ExperienceCard
+                        key={item.id || eIdx}
+                        tag={item.tag}
+                        date={item.date}
+                        title={item.title}
+                        org={item.org}
+                        detail={item.detail}
+                        metric={item.metric}
+                        metricLabel={item.metricLabel}
+                        link={item.link}
+                        linkText={item.linkText}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </div>
 
-      {/* 3. RESUMED VERTICAL FOOTER ACTIONS */}
+      {/* 3. FOOTER ACTIONS */}
       <div className="w-full max-w-5xl px-4 sm:px-6 my-12 flex items-center justify-center gap-4 relative z-20">
         <button
           onClick={() => onNavigate('home')}
