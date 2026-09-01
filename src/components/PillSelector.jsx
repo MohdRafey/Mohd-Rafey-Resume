@@ -1,9 +1,10 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+// src/components/PillSelector.jsx
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 
 const MAX_RIPPLES = 16;
 const TAB_WIDTH = 116; // Static column width
-const DROPLET_WIDTH = 138; // Generous 14px horizontal overhang per side
-const DROPLET_HEIGHT = 52; // Generous 7px vertical overhang above & below
+const DROPLET_WIDTH = 138; // 14px horizontal overhang per side
+const DROPLET_HEIGHT = 52; // 7px vertical overhang above & below
 const TRAY_PADDING = 4; // p-1 in Tailwind (4px)
 
 const VS_SOURCE = `
@@ -83,6 +84,7 @@ export default function PillSelector({
 }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
+  const [isShining, setIsShining] = useState(false);
   
   const ripplesRef = useRef(new Float32Array(MAX_RIPPLES * 4).fill(0.0));
   const rippleIdxRef = useRef(0);
@@ -92,6 +94,14 @@ export default function PillSelector({
   // Calculate centered horizontal offset
   const activeIndex = Math.max(0, items.findIndex((item) => item.id === activeId));
   const dropletLeft = TRAY_PADDING + activeIndex * TAB_WIDTH - ((DROPLET_WIDTH - TAB_WIDTH) / 2);
+
+  // Trigger brief iridescent chromatic sweep on tab switch in dark mode
+  useEffect(() => {
+    if (isLight) return;
+    setIsShining(true);
+    const timer = setTimeout(() => setIsShining(false), 900);
+    return () => clearTimeout(timer);
+  }, [activeId, isLight]);
 
   const addRipple = useCallback((x, y) => {
     const t = (performance.now() - startTimeRef.current) / 1000;
@@ -103,7 +113,7 @@ export default function PillSelector({
     rippleIdxRef.current = (idx + 1) % MAX_RIPPLES;
   }, []);
 
-  // WebGL Context Setup
+  // WebGL Context Setup for Light Mode
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !isLight) return;
@@ -174,7 +184,7 @@ export default function PillSelector({
     };
   }, [isLight]);
 
-  // Ambient Raindrops
+  // Ambient Raindrops (Light mode only)
   useEffect(() => {
     if (!isLight || !enableRandomDrops) return;
 
@@ -202,7 +212,7 @@ export default function PillSelector({
     };
   }, [isLight, enableRandomDrops, addRipple, activeId]);
 
-  // Hover wake
+  // Hover wake for Light mode
   const handlePointerMove = (e) => {
     if (!isLight) return;
     const canvas = canvasRef.current;
@@ -248,9 +258,9 @@ export default function PillSelector({
     <div
       ref={containerRef}
       onPointerMove={handlePointerMove}
-      className={`ios-glass-panel relative inline-flex items-center p-1 rounded-full select-none transition-all duration-300 !overflow-visible z-20 ${className}`}
+      className={`ios-glass-panel relative inline-flex items-center p-1 rounded-full select-none transition-all duration-300 !overflow-visible z-20 group/pill ${className}`}
     >
-      {/* 1. EXPANDED PROTRUDING WATER DROPLET CAPSULE (54PX HEIGHT / 144PX WIDTH) */}
+      {/* 1. EXPANDED MOVING CAPSULE (Light Mode Droplet / Dark Mode Iridescent Glare) */}
       <div
         className="absolute top-1/2 -translate-y-1/2 h-[54px] rounded-full pointer-events-none transition-all duration-400 ease-[cubic-bezier(0.34,1.45,0.64,1)] z-10 overflow-hidden"
         style={{
@@ -258,22 +268,53 @@ export default function PillSelector({
           width: `${DROPLET_WIDTH}px`,
           background: isLight
             ? 'rgba(255, 255, 255, 0.12)'
-            : 'linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)',
+            : 'linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(255, 255, 255, 0.08) 100%)',
           border: isLight
             ? '1.5px solid rgba(255, 255, 255, 0.95)'
-            : '1px solid rgba(255, 255, 255, 0.16)',
+            : '1px solid rgba(255, 255, 255, 0.22)',
           boxShadow: isLight
             ? '0 12px 28px -2px rgba(17, 22, 51, 0.16), 0 3px 8px -1px rgba(17, 22, 51, 0.08), inset 0 1px 1.5px rgba(255, 255, 255, 1), inset 0 -1px 1px rgba(255, 255, 255, 0.5)'
-            : '0 10px 28px -4px rgba(0, 0, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.22)',
+            : 'inset 0 1px 1.5px rgba(255, 255, 255, 0.45), inset -0.2em -0.2em 0.3em rgba(99, 102, 241, 0.2), inset -0.2em -0.5em 0.6em rgba(0, 0, 0, 0.6)',
           backdropFilter: 'blur(20px) saturate(160%)',
           WebkitBackdropFilter: 'blur(20px) saturate(160%)'
         }}
       >
+        {/* Light Mode: Dynamic Water Canvas */}
         {isLight && (
           <canvas
             ref={canvasRef}
             className="absolute inset-0 w-full h-full block pointer-events-none"
           />
+        )}
+
+        {/* Dark Mode: Iridescent Internal Prismatic Flares & Specular Ring */}
+        {!isLight && (
+          <>
+            {/* Prismatic color diffraction sweep */}
+            <div
+              className={`absolute inset-[-1px] rounded-full pointer-events-none transition-all duration-500 ease-out ${
+                isShining ? 'opacity-85 translate-x-0 scale-100' : 'opacity-0 translate-x-5 scale-90 group-hover/pill:opacity-75 group-hover/pill:translate-x-0 group-hover/pill:scale-100'
+              }`}
+              style={{
+                background: 'linear-gradient(98deg, rgba(244, 63, 94, 0.9) -5%, rgba(168, 85, 247, 0.9) 45%, rgba(56, 189, 248, 0.9) 110%)',
+                WebkitMask: 'linear-gradient(166deg, transparent 40%, black)',
+                mask: 'linear-gradient(166deg, transparent 40%, black)',
+                filter: 'blur(4px) brightness(1.2) contrast(1.3)',
+                boxShadow: 'inset 0 -1px 0 1px rgba(255, 255, 255, 0.3), inset 0 -0.2em 0.25em rgba(255, 255, 255, 0.5)',
+                zIndex: 3
+              }}
+            />
+            {/* Soft inner ambient light bleed */}
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{
+                opacity: 0.3,
+                boxShadow: 'inset 0 -0.2em 2px 1px rgba(255, 255, 255, 0.8), inset 0 -0.25em 0.35em rgba(165, 180, 252, 0.6), inset 0 -0.3em 0.75em rgba(99, 102, 241, 0.4)',
+                mixBlendMode: 'screen',
+                zIndex: 2
+              }}
+            />
+          </>
         )}
       </div>
 

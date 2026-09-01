@@ -1,6 +1,7 @@
 // src/pages/HomePage.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import LiquidDropletButton from '../components/LiquidDropletButton';
+import IridescentButton from '../components/IridescentButton';
 
 const areasOfExploration = [
   {
@@ -63,7 +64,7 @@ const areasOfExploration = [
   }
 ];
 
-export default function HomePage({ onNavigate }) {
+export default function HomePage({ onNavigate, isLight = false }) {
   return (
     <div className="w-full flex flex-col items-center animate-fadeIn">
       {/* MOBILE-ONLY EXPERIENCE NOTICE */}
@@ -73,10 +74,10 @@ export default function HomePage({ onNavigate }) {
             🖥️
           </div>
           <div className="text-left">
-            <p className="text-xs font-bold leading-tight mb-0.5 text-[#111633] dark:text-white">
+            <p className={`text-xs font-bold leading-tight mb-0.5 ${isLight ? 'text-[#111633]' : 'text-white'}`}>
               Interactive Desktop Experience
             </p>
-            <p className="text-[11px] leading-snug text-[#525875] dark:text-slate-300">
+            <p className={`text-[11px] leading-snug ${isLight ? 'text-[#525875]' : 'text-slate-300'}`}>
               This site features interactive canvas shaders and 3D scenes best experienced on a desktop screen.
             </p>
           </div>
@@ -101,32 +102,53 @@ export default function HomePage({ onNavigate }) {
             Software Engineer &amp; Systems
           </div>
 
-          <h1 className="text-3xl sm:text-6xl font-black text-white tracking-tight leading-[1.12] mb-6">
+          <h1 className={`text-3xl sm:text-6xl font-black tracking-tight leading-[1.12] mb-6 ${
+            isLight ? 'text-[#111633]' : 'text-white'
+          }`}>
             Hello, I am <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-[var(--accent-light)]">Mohd Rafey</span>
           </h1>
 
-          <p className="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto mb-10 font-normal leading-relaxed">
-            Senior Engineer at <span className="text-white font-semibold">SMS Group India Pvt. Ltd.</span> architecting high-reliability industrial automation software for steelmaker giants including JSW and AM/NS. With a Major in Cloud Computing, I build mission-critical shift systems, real-time telemetry dashboards, and spatial 3D architectural environments.
+          <p className={`text-base sm:text-lg max-w-3xl mx-auto mb-10 font-normal leading-relaxed ${
+            isLight ? 'text-[#525875]' : 'text-slate-300'
+          }`}>
+            Senior Engineer at <span className={`font-semibold ${isLight ? 'text-[#111633]' : 'text-white'}`}>SMS Group India Pvt. Ltd.</span> architecting high-reliability industrial automation software for steelmaker giants including JSW and AM/NS. With a Major in Cloud Computing, I build mission-critical shift systems, real-time telemetry dashboards, and spatial 3D architectural environments.
           </p>
 
           {/* ACTION BUTTONS */}
-          <div className="flex justify-center items-center gap-4 flex-wrap">
-            {/* LAUNCH RESUME (WITH LIQUID RIPPLES) */}
-<LiquidDropletButton
+<div className="flex justify-center items-center gap-4 flex-wrap">
+        {isLight ? (
+  <LiquidDropletButton
+    key="btn-light"
     enableRandomDrops={true}
     onClick={() => onNavigate('resume')}
     className="hover:scale-105"
   >
-    <div className="px-8 py-3.5 text-sm font-bold flex items-center gap-2">
+    <div className="px-8 py-3.5 text-sm font-bold flex items-center gap-2 text-[#111633] !drop-shadow-none">
+      <span className="text-[#111633]">Launch Resume</span>
+      <span className="text-[#111633]">→</span>
+    </div>
+  </LiquidDropletButton>
+) : (
+  <IridescentButton
+    key="btn-dark"
+    onClick={() => onNavigate('resume')}
+    className="hover:scale-105"
+  >
+    <div className="px-8 py-3.5 text-sm font-bold flex items-center gap-2 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
       <span>Launch Resume</span>
       <span>→</span>
     </div>
-  </LiquidDropletButton>
+  </IridescentButton>
+)}
 
             {/* GET IN TOUCH */}
             <a 
               href="#contact" 
-              className="px-8 py-3.5 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-bold text-sm border border-white/10 shadow-sm hover:shadow-md transition-all no-underline"
+              className={`px-8 py-3.5 rounded-full font-bold text-sm shadow-sm hover:shadow-md transition-all no-underline ${
+                isLight 
+                  ? 'bg-white/80 hover:bg-white text-[#111633] border border-[#1C2951]/15' 
+                  : 'bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-white/10'
+              }`}
             >
               Get In Touch
             </a>
@@ -134,16 +156,16 @@ export default function HomePage({ onNavigate }) {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-12 pt-8 border-t border-white/10 max-w-2xl mx-auto">
             <div className="p-3">
-              <span className="text-2xl sm:text-3xl font-black text-white block">5+ Yrs</span>
-              <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Engineering</span>
+              <span className={`text-2xl sm:text-3xl font-black block ${isLight ? 'text-[#111633]' : 'text-white'}`}>5+ Yrs</span>
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>Engineering</span>
             </div>
             <div className="p-3">
-              <span className="text-2xl sm:text-3xl font-black text-white block">C# / .NET</span>
-              <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Ecosystem</span>
+              <span className={`text-2xl sm:text-3xl font-black block ${isLight ? 'text-[#111633]' : 'text-white'}`}>C# / .NET</span>
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>Ecosystem</span>
             </div>
             <div className="p-3 col-span-2 sm:col-span-1">
-              <span className="text-2xl sm:text-3xl font-black text-white block">Cloud</span>
-              <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Computing Major</span>
+              <span className={`text-2xl sm:text-3xl font-black block ${isLight ? 'text-[#111633]' : 'text-white'}`}>Cloud</span>
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>Computing Major</span>
             </div>
           </div>
         </div>
@@ -162,7 +184,7 @@ export default function HomePage({ onNavigate }) {
           >
             Specialized Domains
           </span>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className={`text-2xl sm:text-4xl font-extrabold tracking-tight ${isLight ? 'text-[#111633]' : 'text-white'}`}>
             Areas of Exploration
           </h2>
         </div>
@@ -178,16 +200,20 @@ export default function HomePage({ onNavigate }) {
                   <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center shadow-xs">
                     {item.icon}
                   </div>
-                  <span className="text-xs font-bold text-slate-200 bg-white/10 px-3.5 py-1.5 rounded-full border border-white/15">
+                  <span className={`text-xs font-bold px-3.5 py-1.5 rounded-full border ${
+                    isLight 
+                      ? 'text-[#111633] bg-[#1C2951]/5 border-[#1C2951]/10' 
+                      : 'text-slate-200 bg-white/10 border-white/15'
+                  }`}>
                     {item.badge}
                   </span>
                 </div>
-                <h3 className="text-xl font-black text-white mb-2.5">{item.title}</h3>
-                <p className="text-sm text-slate-300 leading-relaxed mb-6 font-normal">{item.desc}</p>
+                <h3 className={`text-xl font-black mb-2.5 ${isLight ? 'text-[#111633]' : 'text-white'}`}>{item.title}</h3>
+                <p className={`text-sm leading-relaxed mb-6 font-normal ${isLight ? 'text-[#525875]' : 'text-slate-300'}`}>{item.desc}</p>
               </div>
 
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400">{item.stats}</span>
+              <div className={`pt-4 border-t flex items-center justify-between ${isLight ? 'border-[#1C2951]/10' : 'border-white/10'}`}>
+                <span className={`text-xs font-bold ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>{item.stats}</span>
                 {item.action === 'view-3d' ? (
                   <button 
                     onClick={() => onNavigate('3d-designs')}
@@ -199,7 +225,9 @@ export default function HomePage({ onNavigate }) {
                 ) : (
                   <a 
                     href="#contact" 
-                    className="text-xs font-bold text-slate-200 hover:text-white flex items-center gap-1 no-underline"
+                    className={`text-xs font-bold flex items-center gap-1 no-underline ${
+                      isLight ? 'text-[#111633] hover:opacity-80' : 'text-slate-200 hover:text-white'
+                    }`}
                   >
                     {item.linkText}
                   </a>

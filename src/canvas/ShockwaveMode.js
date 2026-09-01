@@ -4,7 +4,7 @@ import { GridDigitalClock } from './GridDigitalClock';
 export class ShockwaveMode {
   constructor() {
     this.MOUSE_RADIUS = 130;
-    this.FORCE_STRENGTH = 16;
+    this.FORCE_STRENGTH = 18;
     this.clock = new GridDigitalClock({ digitGap: 1, rowGap: 1 });
   }
 
@@ -19,10 +19,10 @@ export class ShockwaveMode {
       y: e.clientY,
       currentRadius: 5,
       maxRadius: maxScreenDist,
-      speed: 16,
-      waveWidth: 95,
+      speed: 12,
+      waveWidth: 110,           // Wider wave front for a bolder ridge
       strength: 1.0,
-      decay: 0.985
+      decay: 0.992              // Slower energy decay (less falloff over distance)
     });
   }
 
@@ -57,22 +57,27 @@ export class ShockwaveMode {
 
       const waveDist = Math.abs(rdist - rip.currentRadius);
       if (waveDist < rip.waveWidth) {
-        const waveRatio = (1 - waveDist / rip.waveWidth) * rip.strength;
+        // Cosine curve gives a sharper, punchier peak crest
+        const linearRatio = (1 - waveDist / rip.waveWidth);
+        const waveRatio = Math.sin(linearRatio * Math.PI * 0.5) * rip.strength;
         const angle = Math.atan2(rdy, rdx);
 
-        forceX += Math.cos(angle) * waveRatio * 22;
-        forceY += Math.sin(angle) * waveRatio * 22;
+        // Stronger wave push
+        forceX += Math.cos(angle) * waveRatio * 28;
+        forceY += Math.sin(angle) * waveRatio * 28;
 
         rippleIntensity = Math.max(rippleIntensity, waveRatio);
+        
+        // Sustained high brightness along the wave
         alpha = Math.max(alpha, 0.16 + waveRatio * 0.84);
-        targetRadius = Math.max(targetRadius, dot.baseRadius + waveRatio * 1.8);
+        targetRadius = Math.max(targetRadius, dot.baseRadius + waveRatio * 2.6);
       }
     }
 
     return { forceX, forceY, targetRadius, alpha, rippleIntensity };
   }
 
-drawGridLines(ctx, dots2D, ripples, isLight) {
+  drawGridLines(ctx, dots2D, ripples, isLight) {
     // Skip entirely below 1440px
     if (window.innerWidth < 1440) {
       this.clock.draw(ctx, dots2D, ripples, isLight);
@@ -99,9 +104,9 @@ drawGridLines(ctx, dots2D, ripples, isLight) {
 
     if (isLight) {
       if (dot.isClockVertex) {
-        ctx.fillStyle = 'rgba(30, 41, 59, 0.9)';
-      } else if (dot.rippleIntensity > 0.08) {
-        ctx.fillStyle = `rgba(79, 70, 229, ${dot.alpha})`;
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.95)';
+      } else if (dot.rippleIntensity > 0.05) {
+        ctx.fillStyle = `rgba(79, 70, 229, ${Math.min(1.0, dot.alpha * 1.15)})`;
       } else if (dot.alpha > 0.24) {
         ctx.fillStyle = `rgba(99, 102, 241, ${dot.alpha})`;
       } else {
@@ -109,9 +114,16 @@ drawGridLines(ctx, dots2D, ripples, isLight) {
       }
     } else {
       if (dot.isClockVertex) {
-        ctx.fillStyle = 'rgba(248, 250, 252, 0.95)';
-      } else if (dot.rippleIntensity > 0.08) {
-        ctx.fillStyle = `rgba(245, 158, 11, ${dot.alpha})`;
+        ctx.fillStyle = 'rgba(255, 255, 255, 1.0)';
+      } else if (dot.rippleIntensity > 0.55) {
+        // High-energy wave crest: radiant white-amber glow
+        ctx.fillStyle = `rgba(255, 243, 199, ${Math.min(1.0, dot.alpha + 0.15)})`;
+      } else if (dot.rippleIntensity > 0.18) {
+        // Mid-wave: vivid amber-gold
+        ctx.fillStyle = `rgba(251, 191, 36, ${dot.alpha})`;
+      } else if (dot.rippleIntensity > 0.04) {
+        // Outer wave fringe: electric purple/indigo before ambient fade
+        ctx.fillStyle = `rgba(167, 139, 250, ${dot.alpha * 0.9})`;
       } else if (dot.alpha > 0.24) {
         ctx.fillStyle = `rgba(165, 180, 252, ${dot.alpha})`;
       } else {

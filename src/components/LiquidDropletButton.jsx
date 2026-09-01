@@ -1,5 +1,5 @@
 // src/components/LiquidDropletButton.jsx
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 
 const MAX_RIPPLES = 16;
 
@@ -25,7 +25,6 @@ const FS_SOURCE = `
 
       float age = u_time - birth;
       if (age >= 0.0 && age <= 1.2) {
-        // True 1:1 circular Euclidean distance in screen pixels
         float dist = distance(p, r.xy);
         float waveFront = age * 120.0;
         float ringDist = dist - waveFront;
@@ -74,37 +73,12 @@ function compileShader(gl, type, source) {
 export default function LiquidDropletButton({
   children,
   onClick,
-  isLight: propIsLight,
+  isLight = true,
   enableRandomDrops = false,
   className = '',
   style = {},
   ...props
 }) {
-  const [domIsLight, setDomIsLight] = useState(() => {
-    if (typeof document === 'undefined') return false;
-    return document.documentElement.getAttribute('data-theme') === 'light' ||
-           document.documentElement.classList.contains('light');
-  });
-
-  useEffect(() => {
-    if (propIsLight !== undefined) return;
-    const checkTheme = () => {
-      const isLightMode = document.documentElement.getAttribute('data-theme') === 'light' ||
-                          document.documentElement.classList.contains('light');
-      setDomIsLight(isLightMode);
-    };
-
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme', 'class']
-    });
-
-    return () => observer.disconnect();
-  }, [propIsLight]);
-
-  const isLight = propIsLight !== undefined ? propIsLight : domIsLight;
-
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const ripplesRef = useRef(new Float32Array(MAX_RIPPLES * 4).fill(0.0));
@@ -122,14 +96,14 @@ export default function LiquidDropletButton({
     rippleIdxRef.current = (idx + 1) % MAX_RIPPLES;
   }, []);
 
-  // Sync canvas buffer size when in light mode
+  // Sync canvas buffer size reliably across dynamic theme switches & resizes
   useEffect(() => {
     if (!isLight) return;
 
     const syncCanvasSize = () => {
       if (containerRef.current && canvasRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        if (rect.width > 10 && rect.height > 10) {
+        if (rect.width > 0 && rect.height > 0) {
           canvasRef.current.width = Math.round(rect.width);
           canvasRef.current.height = Math.round(rect.height);
         }
@@ -137,11 +111,16 @@ export default function LiquidDropletButton({
     };
 
     syncCanvasSize();
+    const frameId = requestAnimationFrame(syncCanvasSize);
     window.addEventListener('resize', syncCanvasSize);
-    return () => window.removeEventListener('resize', syncCanvasSize);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener('resize', syncCanvasSize);
+    };
   }, [isLight]);
 
-  // WebGL Context setup (only initialized and running in Light mode)
+  // WebGL Context setup
   useEffect(() => {
     if (!isLight) return;
 
@@ -282,8 +261,16 @@ export default function LiquidDropletButton({
   return (
     <div
       ref={containerRef}
+      role="button"
+      tabIndex={0}
       onPointerMove={handlePointerMove}
       onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClick(e);
+        }
+      }}
       className={`relative inline-flex items-center justify-center rounded-full select-none cursor-pointer transition-transform duration-300 overflow-hidden ${className}`}
       style={{
         background: isLight
@@ -309,11 +296,11 @@ export default function LiquidDropletButton({
       )}
 
       <div 
-        className="relative z-10 flex items-center justify-center pointer-events-none transition-colors duration-300"
+        className="relative z-10 flex items-center justify-center pointer-events-none transition-colors duration-300 font-bold"
         style={{
           color: isLight ? '#111633' : '#ffffff',
           WebkitTextFillColor: isLight ? '#111633' : '#ffffff',
-          textShadow: isLight ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.9)'
+          textShadow: 'none'
         }}
       >
         {children}

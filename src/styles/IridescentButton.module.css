@@ -1,0 +1,94 @@
+/* src/styles/IridescentButton.module.css */
+
+.iridescentBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  cursor: pointer;
+  user-select: none;
+  isolation: isolate;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  /* Identical capsule border & gradients from PillSelector */
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  outline: none;
+
+  background: 
+    linear-gradient(
+      180deg, 
+      rgba(255, 255, 255, 0.14) 0%, 
+      rgba(255, 255, 255, 0.03) 40%, 
+      rgba(255, 255, 255, 0.08) 100%
+    );
+
+  box-shadow: 
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.45), 
+    inset -0.2em -0.2em 0.3em rgba(99, 102, 241, 0.2), 
+    inset -0.2em -0.5em 0.6em rgba(0, 0, 0, 0.6);
+
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  transition: transform 0.3s ease-out;
+}
+
+/* Matching PillSelector's duration-500 ease-out on all states */
+.iridescentBtn::before,
+.iridescentBtn::after {
+  content: "";
+  position: absolute;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+/* 1. Prismatic Color Diffraction Sweep */
+.iridescentBtn::before {
+  inset: -1px;
+  opacity: 0;
+  transform: translate(20px, 0) scale(0.9);
+  background: linear-gradient(
+    98deg,
+    rgba(244, 63, 94, 0.9) -5%,
+    rgba(168, 85, 247, 0.9) 45%,
+    rgba(56, 189, 248, 0.9) 110%
+  );
+  -webkit-mask: linear-gradient(166deg, transparent 40%, black);
+  mask: linear-gradient(166deg, transparent 40%, black);
+  filter: blur(4px) brightness(1.2) contrast(1.3);
+  box-shadow: 
+    inset 0 -1px 0 1px rgba(255, 255, 255, 0.3), 
+    inset 0 -0.2em 0.25em rgba(255, 255, 255, 0.5);
+  z-index: 3;
+}
+
+/* 2. Soft Inner Ambient Specular Bleed */
+.iridescentBtn::after {
+  inset: 0;
+  opacity: 0.3;
+  background: transparent;
+  box-shadow: 
+    inset 0 -0.2em 2px 1px rgba(255, 255, 255, 0.8), 
+    inset 0 -0.25em 0.35em rgba(165, 180, 252, 0.6), 
+    inset 0 -0.3em 0.75em rgba(99, 102, 241, 0.4);
+  mix-blend-mode: screen;
+  z-index: 2;
+}
+
+/* Hover State */
+.iridescentBtn:hover::before {
+  opacity: 0.75;
+  transform: translate(0, 0) scale(1);
+}
+
+/* Shine Active State (On Refresh / Tab Switch / Click) */
+.iridescentBtn.shine::before {
+  opacity: 0.85;
+  transform: translate(0, 0) scale(1);
+}
+
+.iridescentBtn:active {
+  transform: scale(0.98);
+}

@@ -65,10 +65,10 @@ export class GridDigitalClock {
     if (panelRect && panelRect.width > 0) {
       const panelRightCol = Math.floor(panelRect.right / gridSpacing);
       const targetCol = panelRightCol + 2;
-      this.startCol = Math.max(1, Math.min(maxCols - 7, targetCol));
+      this.startCol = Math.max(1, Math.min(maxCols - 19, targetCol));
       this.startRow = 5;
     } else {
-      this.startCol = Math.max(2, maxCols - 7);
+      this.startCol = Math.max(2, maxCols - 10);
       this.startRow = 5;
     }
   }

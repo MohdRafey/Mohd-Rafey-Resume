@@ -4,9 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>portfolio</title>
+    <title>Mohd Rafey - Portfolio</title>
+    
+    <!-- Instant theme initialization before paint -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('app-theme');
+          var isMobile = window.innerWidth < 768;
+          // Default to light on mobile, or saved theme, or your preferred default (e.g. 'light')
+          var theme = isMobile ? 'light' : (saved || 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
   </head>
-  <body>
+  <body class="bg-[#f7f8fa] text-[#111633] transition-colors duration-500 selection:bg-brand-accent selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

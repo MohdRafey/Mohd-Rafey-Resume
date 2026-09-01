@@ -4,6 +4,7 @@ import AmbientBackground from './components/AmbientBackground';
 import RefractionFilter from './components/RefractionFilter';
 import PillSelector from './components/PillSelector';
 import LiquidDropletButton from './components/LiquidDropletButton';
+import IridescentButton from './components/IridescentButton';
 import HomePage from './pages/HomePage';
 import Studio3DPage from './pages/Studio3DPage';
 import ResumePage from './pages/ResumePage';
@@ -25,7 +26,7 @@ const themeOptions = [
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
-  const [interactiveMode, setInteractiveMode] = useState('shockwave');
+  const [interactiveMode, setInteractiveMode] = useState('light');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -94,6 +95,11 @@ export default function App() {
   const navPaddingX = (1 - scrollProgress) * 20;
   const currentRadius = Math.round((1 - scrollProgress) * 32);
   const navRadius = `${currentRadius}px`;
+
+  const scrollToContact = () => {
+    const el = document.getElementById('contact');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <div 
@@ -216,19 +222,30 @@ export default function App() {
               </a>
             </nav>
 
-            {/* CONNECT DROPLET BUTTON (ENLARGED TO MATCH LAUNCH RESUME) */}
-            <LiquidDropletButton
-              enableRandomDrops={false}
-              onClick={() => {
-                const contactEl = document.getElementById('contact');
-                if (contactEl) contactEl.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="hover:scale-105"
-            >
-              <div className="px-6 py-2.5 text-xs sm:text-sm font-bold flex items-center gap-1.5 tracking-normal">
-                <span>Connect</span>
-              </div>
-            </LiquidDropletButton>
+            {/* CONNECT BUTTON */}
+            {isLight ? (
+              <LiquidDropletButton
+                isLight={true}
+                enableRandomDrops={false}
+                onClick={scrollToContact}
+                className="hover:scale-105"
+              >
+                <div className="px-6 py-2.5 text-xs sm:text-sm font-bold flex items-center gap-1.5 text-[#111633]">
+                  <span>Connect</span>
+                  <span>→</span>
+                </div>
+              </LiquidDropletButton>
+            ) : (
+              <IridescentButton
+                onClick={scrollToContact}
+                className="hover:scale-105 transition-transform"
+              >
+                <div className="px-6 py-2.5 text-xs sm:text-sm font-bold flex items-center gap-1.5 text-white">
+                  <span>Connect</span>
+                  <span>→</span>
+                </div>
+              </IridescentButton>
+            )}
           </div>
         </header>
       </div>
@@ -237,10 +254,10 @@ export default function App() {
 
       {/* Main Content Router */}
       <main className="relative z-10 w-full flex flex-col items-center pb-24">
-        {activePage === 'home' && (
-          <div className="w-full max-w-5xl px-4 sm:px-6 py-6">
-            <HomePage onNavigate={navigateTo} />
-          </div>
+{activePage === 'home' && (
+  <div className="w-full max-w-5xl px-4 sm:px-6 py-6">
+    <HomePage onNavigate={navigateTo} isLight={isLight} />
+  </div>
         )}
         {activePage === 'resume' && (
           <div className="w-full">
