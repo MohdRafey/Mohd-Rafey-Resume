@@ -24,13 +24,44 @@ const themeOptions = [
   }
 ];
 
+// Helper to determine active page from URL hash
+const getPageFromHash = () => {
+  const hash = window.location.hash.replace('#', '').trim();
+  const validPages = ['home', 'resume', '3d-designs'];
+  return validPages.includes(hash) ? hash : 'home';
+};
+
 export default function App() {
-  const [activePage, setActivePage] = useState('home');
-  const [interactiveMode, setInteractiveMode] = useState('light');
+  // 1. Initialize page from current URL hash
+  const [activePage, setActivePage] = useState(getPageFromHash);
+
+  // 2. Initialize theme from localStorage (defaulting to dark 'shockwave' or 'light')
+  const [interactiveMode, setInteractiveMode] = useState(() => {
+    const savedTheme = localStorage.getItem('site-theme');
+    return savedTheme || 'light';
+  });
+
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   const isLight = interactiveMode === 'light';
+
+  // 3. Keep activePage synced when browser back/forward buttons or hash change
+  useEffect(() => {
+    const handleHashChange = () => {
+      const page = getPageFromHash();
+      setActivePage(page);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // 4. Update data-theme and persist to localStorage
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', interactiveMode);
+    localStorage.setItem('site-theme', interactiveMode);
+  }, [interactiveMode]);
 
   // Lock mobile devices to Light Mode
   useEffect(() => {
@@ -62,10 +93,6 @@ export default function App() {
   };
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', interactiveMode);
-  }, [interactiveMode]);
-
-  useEffect(() => {
     let ticking = false;
     const MAX_SCROLL_DISTANCE = 140;
 
@@ -86,14 +113,16 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // 5. Update navigateTo to set hash
   const navigateTo = (page) => {
+    window.location.hash = page === 'home' ? '' : page;
     setActivePage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navPaddingTop = (1 - scrollProgress) * 16;
+  const navPaddingTop = (1 - scrollProgress) * 20;
   const navPaddingX = (1 - scrollProgress) * 20;
-  const currentRadius = Math.round((1 - scrollProgress) * 32);
+  const currentRadius = Math.round((1 - scrollProgress) * 36);
   const navRadius = `${currentRadius}px`;
 
   const scrollToContact = () => {
@@ -108,7 +137,6 @@ export default function App() {
         isLight ? 'text-[#111633]' : 'text-slate-100'
       }`}
     >
-      {/* Black Fade Veil */}
       <div 
         className={`fixed inset-0 z-[100] bg-[#07090e] pointer-events-none transition-opacity duration-300 ease-in-out ${
           isTransitioning ? 'opacity-100' : 'opacity-0'
@@ -254,10 +282,10 @@ export default function App() {
 
       {/* Main Content Router */}
       <main className="relative z-10 w-full flex flex-col items-center pb-24">
-{activePage === 'home' && (
-  <div className="w-full max-w-5xl px-4 sm:px-6 py-6">
-    <HomePage onNavigate={navigateTo} isLight={isLight} />
-  </div>
+        {activePage === 'home' && (
+          <div className="w-full max-w-5xl px-4 sm:px-6 py-6">
+            <HomePage onNavigate={navigateTo} isLight={isLight} />
+          </div>
         )}
         {activePage === 'resume' && (
           <div className="w-full">
