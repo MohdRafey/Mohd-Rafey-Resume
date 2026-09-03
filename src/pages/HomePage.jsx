@@ -1,17 +1,18 @@
 // src/pages/HomePage.jsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import LiquidDropletButton from '../components/LiquidDropletButton';
 import IridescentButton from '../components/IridescentButton';
+
+import profilePhoto from '/profile.jpg';
 
 const areasOfExploration = [
   {
     id: 'designing',
     title: '3D & Spatial Design',
     desc: 'Interactive 3D environments, multi-angle isometric architecture, and stylized low-poly worlds.',
-    action: 'view-3d',
     badge: 'Blender & Shaders',
-    stats: '4 Angles • Real-time View',
-    linkText: 'Explore 3D Studio →',
+    stats: 'Creative Hobby',
+    linkText: 'Discuss Creative 3D →',
     icon: (
       <svg className="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
@@ -24,7 +25,6 @@ const areasOfExploration = [
     id: 'cloud',
     title: 'Cloud & Infrastructure',
     desc: 'Scalable backend deployments, containerized architectures, telemetry pipelines, and cloud security.',
-    action: 'contact-section',
     badge: 'Cloud Computing Major',
     stats: 'Enterprise Scale',
     linkText: 'View Architecture →',
@@ -38,7 +38,6 @@ const areasOfExploration = [
     id: 'automation',
     title: 'Industrial Automation',
     desc: 'Mission-critical telemetry tools, shift management systems, and real-time plant dashboards for JSW & AM/NS.',
-    action: 'contact-section',
     badge: 'Senior Engineer',
     stats: 'High Availability',
     linkText: 'Industrial Solutions →',
@@ -52,7 +51,6 @@ const areasOfExploration = [
     id: 'ai-prototypes',
     title: 'AI & Generative Workflows',
     desc: 'Autonomous agent pipelines, procedural asset tools, algorithmic visualizers, and stateful experiments.',
-    action: 'contact-section',
     badge: 'Applied AI Labs',
     stats: 'Agentic Workflows',
     linkText: 'See Experiments →',
@@ -64,11 +62,11 @@ const areasOfExploration = [
   }
 ];
 
-export default function HomePage({ onNavigate, isLight = false }) {
+export default function HomePage({ onNavigate, scrollToSection, isLight = false }) {
   return (
     <div className="w-full flex flex-col items-center animate-fadeIn">
-      {/* MOBILE-ONLY EXPERIENCE NOTICE */}
-      <div className="w-full block md:hidden -mt-4 mb-4">
+      {/* MOBILE EXPERIENCE NOTICE */}
+      <div className="w-full block md:hidden -mt-4 mb-6">
         <div className="ios-glass-panel py-3 px-4 flex items-center gap-3.5 !rounded-2xl border border-white/40 shadow-sm">
           <div className="w-9 h-9 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-base">
             🖥️
@@ -78,101 +76,174 @@ export default function HomePage({ onNavigate, isLight = false }) {
               Interactive Desktop Experience
             </p>
             <p className={`text-[11px] leading-snug ${isLight ? 'text-[#525875]' : 'text-slate-300'}`}>
-              This site features interactive canvas shaders and 3D scenes best experienced on a desktop screen.
+              This site features interactive canvas shaders and fluid mechanics best experienced on desktop displays.
             </p>
           </div>
         </div>
       </div>
 
-      {/* HERO CARD */}
-      <section className="w-full mb-14">
-        <div className="p-8 sm:p-14 ios-glass-panel text-center relative overflow-hidden">
-          <div 
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6 shadow-xs backdrop-blur-md"
+{/* 1. OPEN HERO FOLD: Photo + Identity (Directly over Ambient Background) */}
+<section id="hero" className="w-full pt-4 pb-14 flex flex-col md:flex-row items-center justify-between gap-10 scroll-mt-28">
+  {/* Left Column: Headlines & Call to Actions (order-2 on mobile, order-1 on desktop) */}
+  <div className="flex-1 text-center md:text-left order-2 md:order-1">
+
+    <h1 className={`text-4xl sm:text-6xl font-black tracking-tight leading-[1.1] mb-6 ${
+      isLight ? 'text-[#111633]' : 'text-white'
+    }`}>
+      Hello, I am <br />
+      <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-[var(--accent-light)]">
+        Mohd Rafey
+      </span>
+    </h1>
+
+    <p className={`text-base sm:text-lg max-w-xl mx-auto md:mx-0 mb-8 font-normal leading-relaxed ${
+      isLight ? 'text-[#525875]' : 'text-slate-300'
+    }`}>
+      Senior Engineer at <span className={`font-semibold ${isLight ? 'text-[#111633]' : 'text-white'}`}>SMS Group India Pvt. Ltd.</span>
+    </p>
+
+    <div className="flex items-center justify-center md:justify-start gap-4 flex-wrap">
+      {isLight ? (
+        <div className="rounded-full bg-white/55 shadow-md shadow-indigo-950/5 border border-indigo-900/10  inline-flex">
+          <LiquidDropletButton
+            key="btn-resume-light"
+            enableRandomDrops={true}
+            onClick={() => onNavigate('resume')}
+            className="hover:scale-105"
+          >
+            <div className="px-5 py-3 text-sm font-bold flex items-center gap-2 text-[#111633] !drop-shadow-none">
+              <span>Launch Resume</span>
+              <span>→</span>
+            </div>
+          </LiquidDropletButton>
+        </div>
+      ) : (
+        <div className="rounded-full bg-slate-900/90 shadow-lg shadow-black/40 border border-white/20  inline-flex">
+          <IridescentButton
+            key="btn-resume-dark"
+            onClick={() => onNavigate('resume')}
+            className="hover:scale-105"
+          >
+            <div className="px-7 py-3 text-sm font-bold flex items-center gap-2 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+              <span>Launch Resume</span>
+              <span>→</span>
+            </div>
+          </IridescentButton>
+        </div>
+      )}
+
+      <button 
+        onClick={() => scrollToSection ? scrollToSection('contact') : null}
+        className={`px-7 py-3 rounded-full font-bold text-sm shadow-sm hover:shadow-md transition-all cursor-pointer ${
+          isLight 
+            ? 'bg-white/80 hover:bg-white text-[#111633] border border-[#1C2951]/15' 
+            : 'bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-white/10'
+        }`}
+      >
+        Get In Touch
+      </button>
+    </div>
+  </div>
+
+  {/* Right Column: Circular Framed Portrait (order-1 on mobile, order-2 on desktop) */}
+  <div className="relative shrink-0 flex items-center justify-center order-1 md:order-2">
+    <div 
+      className="w-52 h-52 sm:w-72 sm:h-72 rounded-full overflow-hidden p-1.5 shadow-2xl relative"
+      style={{
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.03) 100%)',
+        border: '1px solid var(--accent-border-fringe)'
+      }}
+    >
+      <img 
+        src={profilePhoto} 
+        alt="Mohd Rafey" 
+        className="w-full h-full object-cover rounded-full"
+      />
+    </div>
+
+    {/* Ambient circular glow ring behind photo */}
+    <div 
+      className="absolute inset-0 rounded-full blur-2xl -z-10 opacity-35 pointer-events-none scale-105"
+      style={{ backgroundColor: 'var(--accent-primary)' }}
+    />
+  </div>
+</section>
+
+      {/* 2. DEDICATED ABOUT CARD: Detailed Bio & Metrics */}
+      <section id="about" className="w-full mb-16 scroll-mt-28">
+        <div className="p-8 sm:p-12 ios-glass-panel relative overflow-hidden">
+          <div className="flex items-center gap-2 mb-5">
+            <span 
+              className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid var(--accent-border-fringe)',
+                color: 'var(--accent-light)'
+              }}
+            >
+              About Me
+            </span>
+          </div>
+
+          <h2 className={`text-2xl sm:text-3xl font-black tracking-tight mb-4 ${
+            isLight ? 'text-[#111633]' : 'text-white'
+          }`}>
+            Engineering Resilient Industrial &amp; Enterprise Platforms
+          </h2>
+
+          <p className={`text-base leading-relaxed font-normal mb-8 max-w-3xl ${
+            isLight ? 'text-[#525875]' : 'text-slate-300'
+          }`}>
+            Senior Engineer at <span className={`font-semibold ${isLight ? 'text-[#111633]' : 'text-white'}`}>SMS Group India Pvt. Ltd.</span> specializing in mission-critical software solutions. My on-site commissioning work spans Level-2 process automation systems for steel manufacturing giants including JSW Steel (Dolvi) and AM/NS India (Hazira). Combining deep experience across the C# and .NET desktop ecosystem with an academic Major in Storage and Cloud Technology, I build fault-tolerant telemetry pipelines, dynamic shift tools, and live operator consoles.
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-white/10">
+            <div className="p-2">
+              <span className={`text-2xl sm:text-3xl font-black block ${isLight ? 'text-[#111633]' : 'text-white'}`}>5+ Yrs</span>
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>Professional</span>
+            </div>
+            <div className="p-2">
+              <span className={`text-2xl sm:text-3xl font-black block ${isLight ? 'text-[#111633]' : 'text-white'}`}>C# / .NET</span>
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>Core Stack</span>
+            </div>
+            <div className="p-2">
+              <span className={`text-2xl sm:text-3xl font-black block ${isLight ? 'text-[#111633]' : 'text-white'}`}>L2 Plant</span>
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>Commissioning</span>
+            </div>
+            <div className="p-2">
+              <span className={`text-2xl sm:text-3xl font-black block ${isLight ? 'text-[#111633]' : 'text-white'}`}>MCA</span>
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>Cloud Major</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. PLACEHOLDER: PROJECTS SECTION */}
+      <section id="projects" className="w-full mb-16 scroll-mt-28">
+        <div className="text-center mb-8">
+          <span 
+            className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-2"
             style={{
               backgroundColor: 'rgba(255, 255, 255, 0.05)',
               border: '1px solid var(--accent-border-fringe)',
               color: 'var(--accent-light)'
             }}
           >
-            <span 
-              className="w-2 h-2 rounded-full animate-pulse"
-              style={{ backgroundColor: 'var(--accent-primary)' }}
-            />
-            Software Engineer &amp; Systems
-          </div>
-
-          <h1 className={`text-3xl sm:text-6xl font-black tracking-tight leading-[1.12] mb-6 ${
-            isLight ? 'text-[#111633]' : 'text-white'
-          }`}>
-            Hello, I am <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-[var(--accent-light)]">Mohd Rafey</span>
-          </h1>
-
-          <p className={`text-base sm:text-lg max-w-3xl mx-auto mb-10 font-normal leading-relaxed ${
-            isLight ? 'text-[#525875]' : 'text-slate-300'
-          }`}>
-            Senior Engineer at <span className={`font-semibold ${isLight ? 'text-[#111633]' : 'text-white'}`}>SMS Group India Pvt. Ltd.</span> architecting high-reliability industrial automation software for steelmaker giants including JSW and AM/NS. With a Major in Cloud Computing, I build mission-critical shift systems, real-time telemetry dashboards, and spatial 3D architectural environments.
-          </p>
-
-          {/* ACTION BUTTONS */}
-<div className="flex justify-center items-center gap-4 flex-wrap">
-        {isLight ? (
-  <LiquidDropletButton
-    key="btn-light"
-    enableRandomDrops={true}
-    onClick={() => onNavigate('resume')}
-    className="hover:scale-105"
-  >
-    <div className="px-8 py-3.5 text-sm font-bold flex items-center gap-2 text-[#111633] !drop-shadow-none">
-      <span className="text-[#111633]">Launch Resume</span>
-      <span className="text-[#111633]">→</span>
-    </div>
-  </LiquidDropletButton>
-) : (
-  <IridescentButton
-    key="btn-dark"
-    onClick={() => onNavigate('resume')}
-    className="hover:scale-105"
-  >
-    <div className="px-8 py-3.5 text-sm font-bold flex items-center gap-2 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-      <span>Launch Resume</span>
-      <span>→</span>
-    </div>
-  </IridescentButton>
-)}
-
-            {/* GET IN TOUCH */}
-            <a 
-              href="#contact" 
-              className={`px-8 py-3.5 rounded-full font-bold text-sm shadow-sm hover:shadow-md transition-all no-underline ${
-                isLight 
-                  ? 'bg-white/80 hover:bg-white text-[#111633] border border-[#1C2951]/15' 
-                  : 'bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-white/10'
-              }`}
-            >
-              Get In Touch
-            </a>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-12 pt-8 border-t border-white/10 max-w-2xl mx-auto">
-            <div className="p-3">
-              <span className={`text-2xl sm:text-3xl font-black block ${isLight ? 'text-[#111633]' : 'text-white'}`}>5+ Yrs</span>
-              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>Engineering</span>
-            </div>
-            <div className="p-3">
-              <span className={`text-2xl sm:text-3xl font-black block ${isLight ? 'text-[#111633]' : 'text-white'}`}>C# / .NET</span>
-              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>Ecosystem</span>
-            </div>
-            <div className="p-3 col-span-2 sm:col-span-1">
-              <span className={`text-2xl sm:text-3xl font-black block ${isLight ? 'text-[#111633]' : 'text-white'}`}>Cloud</span>
-              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>Computing Major</span>
-            </div>
-          </div>
+            Engineering Portfolio
+          </span>
+          <h2 className={`text-2xl sm:text-4xl font-extrabold tracking-tight ${isLight ? 'text-[#111633]' : 'text-white'}`}>
+            Featured Projects
+          </h2>
+        </div>
+        
+        {/* Placeholder container where your project cards will be added */}
+        <div className="ios-glass-panel p-8 text-center text-sm text-slate-400 border border-dashed border-white/20">
+          Ready for your project data and showcase cards.
         </div>
       </section>
 
-      {/* 4-PILLAR EXPLORATION CARDS */}
-      <section id="explore" className="w-full mb-16 scroll-mt-20">
+      {/* 4. EXPLORATION PILLARS */}
+      <section id="exploration" className="w-full mb-16 scroll-mt-28">
         <div className="text-center mb-10">
           <span 
             className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-2"
@@ -182,7 +253,7 @@ export default function HomePage({ onNavigate, isLight = false }) {
               color: 'var(--accent-light)'
             }}
           >
-            Specialized Domains
+            Specialized Domains &amp; Creative Tech
           </span>
           <h2 className={`text-2xl sm:text-4xl font-extrabold tracking-tight ${isLight ? 'text-[#111633]' : 'text-white'}`}>
             Areas of Exploration
@@ -214,24 +285,14 @@ export default function HomePage({ onNavigate, isLight = false }) {
 
               <div className={`pt-4 border-t flex items-center justify-between ${isLight ? 'border-[#1C2951]/10' : 'border-white/10'}`}>
                 <span className={`text-xs font-bold ${isLight ? 'text-[#525875]' : 'text-slate-400'}`}>{item.stats}</span>
-                {item.action === 'view-3d' ? (
-                  <button 
-                    onClick={() => onNavigate('3d-designs')}
-                    className="text-xs font-bold flex items-center gap-1 cursor-pointer bg-transparent border-none p-0"
-                    style={{ color: 'var(--accent-primary)' }}
-                  >
-                    {item.linkText}
-                  </button>
-                ) : (
-                  <a 
-                    href="#contact" 
-                    className={`text-xs font-bold flex items-center gap-1 no-underline ${
-                      isLight ? 'text-[#111633] hover:opacity-80' : 'text-slate-200 hover:text-white'
-                    }`}
-                  >
-                    {item.linkText}
-                  </a>
-                )}
+                <button 
+                  onClick={() => scrollToSection ? scrollToSection('contact') : null}
+                  className={`text-xs font-bold flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 ${
+                    isLight ? 'text-[#111633] hover:opacity-80' : 'text-slate-200 hover:text-white'
+                  }`}
+                >
+                  {item.linkText}
+                </button>
               </div>
             </div>
           ))}

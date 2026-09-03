@@ -6,7 +6,6 @@ import PillSelector from './components/PillSelector';
 import LiquidDropletButton from './components/LiquidDropletButton';
 import IridescentButton from './components/IridescentButton';
 import HomePage from './pages/HomePage';
-import Studio3DPage from './pages/Studio3DPage';
 import ResumePage from './pages/ResumePage';
 
 const themeOptions = [
@@ -27,16 +26,19 @@ const themeOptions = [
 // Helper to determine active page from URL hash
 const getPageFromHash = () => {
   const hash = window.location.hash.replace('#', '').trim();
-  const validPages = ['home', 'resume', '3d-designs'];
-  return validPages.includes(hash) ? hash : 'home';
+  return hash === 'resume' ? 'resume' : 'home';
 };
 
 export default function App() {
-  // 1. Initialize page from current URL hash
+  // 1. Initialize view from URL hash
   const [activePage, setActivePage] = useState(getPageFromHash);
 
-  // 2. Initialize theme from localStorage (defaulting to dark 'shockwave' or 'light')
+  // 2. Initialize theme from DOM (preventing pop-in) or localStorage fallback
   const [interactiveMode, setInteractiveMode] = useState(() => {
+    if (typeof document !== 'undefined') {
+      const domTheme = document.documentElement.getAttribute('data-theme');
+      if (domTheme) return domTheme;
+    }
     const savedTheme = localStorage.getItem('site-theme');
     return savedTheme || 'light';
   });
@@ -46,7 +48,7 @@ export default function App() {
 
   const isLight = interactiveMode === 'light';
 
-  // 3. Keep activePage synced when browser back/forward buttons or hash change
+  // 3. Keep view in sync with URL hash changes (back/forward navigation)
   useEffect(() => {
     const handleHashChange = () => {
       const page = getPageFromHash();
@@ -57,7 +59,7 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // 4. Update data-theme and persist to localStorage
+  // 4. Update data-theme on root and persist to localStorage
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', interactiveMode);
     localStorage.setItem('site-theme', interactiveMode);
@@ -113,22 +115,39 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // 5. Update navigateTo to set hash
   const navigateTo = (page) => {
     window.location.hash = page === 'home' ? '' : page;
     setActivePage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Handles smooth scrolling to single-page sections or top
+  const scrollToSection = (sectionId) => {
+    if (activePage !== 'home') {
+      window.location.hash = '';
+      setActivePage('home');
+      setTimeout(() => {
+        if (sectionId === 'top' || sectionId === 'hero') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          const el = document.getElementById(sectionId);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      if (sectionId === 'top' || sectionId === 'hero') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        const el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   const navPaddingTop = (1 - scrollProgress) * 20;
   const navPaddingX = (1 - scrollProgress) * 20;
   const currentRadius = Math.round((1 - scrollProgress) * 36);
   const navRadius = `${currentRadius}px`;
-
-  const scrollToContact = () => {
-    const el = document.getElementById('contact');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
 
   return (
     <div 
@@ -137,6 +156,7 @@ export default function App() {
         isLight ? 'text-[#111633]' : 'text-slate-100'
       }`}
     >
+      {/* Black Fade Veil */}
       <div 
         className={`fixed inset-0 z-[100] bg-[#07090e] pointer-events-none transition-opacity duration-300 ease-in-out ${
           isTransitioning ? 'opacity-100' : 'opacity-0'
@@ -181,95 +201,88 @@ export default function App() {
           }}
         >
           <div className="w-full max-w-5xl mx-auto flex items-center justify-between">
+            {/* BRAND / LOGO */}
             <button 
-              onClick={() => navigateTo('home')} 
+              onClick={() => scrollToSection('top')} 
               className="flex items-center gap-3 text-left group cursor-pointer bg-transparent border-none p-0"
             >
-              <div 
-                className="w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs text-white shadow-lg transition-transform group-hover:scale-105"
-                style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 0 16px var(--accent-glow)' }}
-              >
-                MR
-              </div>
               <div>
-                <span className={`font-extrabold text-sm tracking-tight block leading-none ${
+                <span className={`font-black text-lg sm:text-xl tracking-tight block leading-none transition-transform group-hover:scale-[1.02] ${
                   isLight ? 'text-[#111633]' : 'text-white'
                 }`}>
                   Mohd Rafey
                 </span>
-                <span className={`text-[10px] font-semibold tracking-wide ${
-                  isLight ? 'text-[#525875]' : 'text-slate-400'
-                }`}>
-                  Systems &amp; 3D
-                </span>
               </div>
             </button>
 
-            {/* NAV LINKS */}
-            <nav className="hidden sm:flex items-center gap-8 text-sm font-semibold">
+            {/* NAV LINKS (SINGLE-PAGE ANCHORS) */}
+            <nav className="hidden sm:flex items-center gap-7 text-sm font-semibold">
               <button 
-                onClick={() => navigateTo('home')}
+                onClick={() => scrollToSection('top')}
                 className={`transition-colors cursor-pointer bg-transparent border-none p-0 ${
-                  activePage === 'home'
-                    ? (isLight ? 'text-[#111633] font-bold' : 'text-white font-bold')
-                    : (isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white')
+                  isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 Home
               </button>
 
               <button 
-                onClick={() => navigateTo('resume')}
+                onClick={() => scrollToSection('about')}
                 className={`transition-colors cursor-pointer bg-transparent border-none p-0 ${
-                  activePage === 'resume'
-                    ? (isLight ? 'text-[#111633] font-bold' : 'text-white font-bold')
-                    : (isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white')
+                  isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                Resume
+                About
               </button>
 
               <button 
-                onClick={() => navigateTo('3d-designs')}
+                onClick={() => scrollToSection('projects')}
                 className={`transition-colors cursor-pointer bg-transparent border-none p-0 ${
-                  activePage === '3d-designs'
-                    ? (isLight ? 'text-[#111633] font-bold' : 'text-white font-bold')
-                    : (isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white')
+                  isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                3D Studio
+                Projects
               </button>
 
-              <a 
-                href="#contact" 
-                className={`transition-colors no-underline ${
+              <button 
+                onClick={() => scrollToSection('exploration')}
+                className={`transition-colors cursor-pointer bg-transparent border-none p-0 ${
+                  isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Exploration
+              </button>
+
+              <button 
+                onClick={() => scrollToSection('contact')}
+                className={`transition-colors cursor-pointer bg-transparent border-none p-0 ${
                   isLight ? 'text-[#525875] hover:text-[#111633]' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 Contact
-              </a>
+              </button>
             </nav>
 
-            {/* CONNECT BUTTON */}
+            {/* RESUME LAUNCH BUTTON */}
             {isLight ? (
               <LiquidDropletButton
                 isLight={true}
                 enableRandomDrops={false}
-                onClick={scrollToContact}
+                onClick={() => navigateTo('resume')}
                 className="hover:scale-105"
               >
-                <div className="px-6 py-2.5 text-xs sm:text-sm font-bold flex items-center gap-1.5 text-[#111633]">
-                  <span>Connect</span>
+                <div className="px-5 py-2 text-xs sm:text-sm font-bold flex items-center gap-1.5 text-[#111633]">
+                  <span>Resume</span>
                   <span>→</span>
                 </div>
               </LiquidDropletButton>
             ) : (
               <IridescentButton
-                onClick={scrollToContact}
+                onClick={() => navigateTo('resume')}
                 className="hover:scale-105 transition-transform"
               >
-                <div className="px-6 py-2.5 text-xs sm:text-sm font-bold flex items-center gap-1.5 text-white">
-                  <span>Connect</span>
+                <div className="px-5 py-2 text-xs sm:text-sm font-bold flex items-center gap-1.5 text-white">
+                  <span>Resume</span>
                   <span>→</span>
                 </div>
               </IridescentButton>
@@ -284,7 +297,7 @@ export default function App() {
       <main className="relative z-10 w-full flex flex-col items-center pb-24">
         {activePage === 'home' && (
           <div className="w-full max-w-5xl px-4 sm:px-6 py-6">
-            <HomePage onNavigate={navigateTo} isLight={isLight} />
+            <HomePage onNavigate={navigateTo} scrollToSection={scrollToSection} isLight={isLight} />
           </div>
         )}
         {activePage === 'resume' && (
@@ -292,40 +305,93 @@ export default function App() {
             <ResumePage onNavigate={navigateTo} isLight={isLight} />
           </div>
         )}
-        {activePage === '3d-designs' && (
-          <div className="w-full max-w-5xl px-4 sm:px-6 py-6">
-            <Studio3DPage onNavigate={navigateTo} />
-          </div>
-        )}
 
-        {/* Footer */}
-        <footer id="contact" className="w-full max-w-5xl px-4 sm:px-6 mt-10">
-          <div className="text-center p-8 sm:p-12 ios-glass-panel">
-            <h2 className={`text-2xl sm:text-3xl font-black mb-2 ${
-              isLight ? 'text-[#111633]' : 'text-white'
-            }`}>
-              Let's Build Something Resilient.
-            </h2>
-            <p className={`mb-8 text-sm max-w-md mx-auto font-normal ${
-              isLight ? 'text-[#525875]' : 'text-slate-400'
-            }`}>
-              Open for technical collaboration, architecture discussions, and custom 3D environment visualization.
-            </p>
-            <a 
-              href="mailto:contact@yourdomain.com" 
-              className="text-white font-bold px-8 py-3.5 rounded-full inline-flex items-center gap-2 shadow-lg hover:scale-105 transition-all"
-              style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 0 24px var(--accent-glow)' }}
-            >
-              <span>Send a Message</span>
-              <span>→</span>
-            </a>
-            <div className={`mt-10 pt-6 border-t text-xs font-medium ${
-              isLight ? 'border-[#1C2951]/10 text-[#525875]' : 'border-white/5 text-slate-500'
-            }`}>
-              © 2026 Mohd Rafey. Crafted with React, Tailwind CSS &amp; Vite.
-            </div>
-          </div>
-        </footer>
+        {/* Global Single-Page Contact & Footer */}
+<footer id="contact" className="w-full max-w-5xl px-4 sm:px-6 mt-10 scroll-mt-28">
+  <div className="text-center p-8 sm:p-12 ios-glass-panel relative overflow-hidden">
+    <div 
+      className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 shadow-xs backdrop-blur-md"
+      style={{
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        border: '1px solid var(--accent-border-fringe)',
+        color: 'var(--accent-light)'
+      }}
+    >
+      <span 
+        className="w-2 h-2 rounded-full animate-pulse"
+        style={{ backgroundColor: 'var(--accent-primary)' }}
+      />
+      Get In Touch
+    </div>
+
+    <h2 className={`text-2xl sm:text-4xl font-black mb-3 tracking-tight ${
+      isLight ? 'text-[#111633]' : 'text-white'
+    }`}>
+      Let's Build Something.
+    </h2>
+
+    <p className={`mb-8 text-sm sm:text-base max-w-lg mx-auto font-normal leading-relaxed ${
+      isLight ? 'text-[#525875]' : 'text-slate-400'
+    }`}>
+      Open for technical collaboration, software architecture discussions, and industrial telemetry consulting.
+    </p>
+
+    {/* 3 CONTACT ACTION LINKS */}
+    <div className="flex items-center justify-center gap-4 flex-wrap mb-10">
+      {/* 1. Direct Email */}
+      <a 
+        href="mailto:mohdrafey2207@gmail.com"
+        className="font-bold text-sm text-white px-6 py-3.5 rounded-full inline-flex items-center gap-2.5 shadow-lg transition-transform hover:scale-105 no-underline"
+        style={{ backgroundColor: 'var(--accent-primary)', boxShadow: '0 0 20px var(--accent-glow)' }}
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        <span>mohdrafey2207@gmail.com</span>
+      </a>
+
+      {/* 2. GitHub Profile */}
+      <a 
+        href="https://github.com/mohdrafey" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className={`font-bold text-sm px-6 py-3.5 rounded-full inline-flex items-center gap-2.5 transition-all no-underline ${
+          isLight 
+            ? 'bg-white/90 hover:bg-white text-[#111633] border border-[#1C2951]/15 shadow-xs' 
+            : 'bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-white/10 shadow-sm'
+        } hover:scale-105`}
+      >
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+        </svg>
+        <span>GitHub</span>
+      </a>
+
+      {/* 3. LinkedIn Profile */}
+      <a 
+        href="https://www.linkedin.com/in/mohd-rafey-a1727b190/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className={`font-bold text-sm px-6 py-3.5 rounded-full inline-flex items-center gap-2.5 transition-all no-underline ${
+          isLight 
+            ? 'bg-white/90 hover:bg-white text-[#111633] border border-[#1C2951]/15 shadow-xs' 
+            : 'bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-white/10 shadow-sm'
+        } hover:scale-105`}
+      >
+        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+        </svg>
+        <span>LinkedIn</span>
+      </a>
+    </div>
+
+    <div className={`pt-6 border-t text-xs font-medium ${
+      isLight ? 'border-[#1C2951]/10 text-[#525875]' : 'border-white/5 text-slate-500'
+    }`}>
+      © 2026 Mohd Rafey. Crafted with React, Tailwind CSS &amp; Vite.[cite: 1]
+    </div>
+  </div>
+</footer>
       </main>
     </div>
   );
